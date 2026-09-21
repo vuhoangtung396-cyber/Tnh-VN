@@ -1,0 +1,19 @@
+print("=== BẮT ĐẦU DEBUG ===")
+for _, o in ipairs(workspace:GetDescendants()) do
+    if o:IsA("BasePart") and o.Name:lower():find("egg") then
+        print("PART: " .. o:GetFullName())
+        print("  Class: " .. o.ClassName)
+        print("  Position: " .. tostring(o.Position))
+        print("  --- Children ---")
+        for _, c in ipairs(o:GetChildren()) do
+            print("    " .. c.ClassName .. " | " .. c.Name)
+        end
+        print("  --- Parent: " .. o.Parent.ClassName .. " | " .. o.Parent.Name)
+        print("  --- Parent Children ---")
+        for _, c in ipairs(o.Parent:GetChildren()) do
+            print("    " .. c.ClassName .. " | " .. c.Name)
+        end
+        break
+    end
+end
+print("=== KẾT THÚC DEBUG ===")
