@@ -1,0 +1,13 @@
+-- Bật log remote
+local mt = getrawmetatable(game)
+local old = mt.__namecall
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(self, ...)
+    local m = getnamecallmethod()
+    if m == "FireServer" or m == "InvokeServer" then
+        print("[REMOTE] " .. self:GetFullName() .. " | " .. m)
+    end
+    return old(self, ...)
+end)
+setreadonly(mt, true)
+print(">>> Đã bật log remote. Giờ CHẠM VÀO TRỨNG BẰNG TAY <<<")
