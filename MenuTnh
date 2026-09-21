@@ -1,0 +1,1747 @@
+-- Tnh-VN MENU
+-- KeyVIP / Steal An Egg
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local LP = Players.LocalPlayer
+
+local S = {
+    ESP = false, ESPEgg = false,
+    ESPColor = Color3.fromRGB(0, 170, 255),
+    AntiHit = false, Antiban = false,
+    Fly = false, FlySpeed = 100,
+    Speed = false, SpeedValue = 100,
+    FixLag = false, AutoSteal = false,
+    PrioritySecret = false, PriorityEggs = {},
+    AntiTrap = false, Language = "VN"
+}
+
+-- ==================================================
+-- BẢNG DỮ LIỆU EGG
+-- ==================================================
+local EggData = {
+    ["Chicken Egg"]={pet="Chicken",rarity="Common",income="$1/s"},
+    ["Dog Egg"]={pet="Dog",rarity="Common",income="$2/s"},
+    ["Bird Egg"]={pet="Bird",rarity="Uncommon",income="$8/s"},
+    ["Burrowing Owl Egg"]={pet="Burrowing Owl",rarity="Rare",income="$35/s"},
+    ["Raccoon Egg"]={pet="Raccoon",rarity="Rare",income="$45/s"},
+    ["Fox Egg"]={pet="Fox",rarity="Epic",income="$180/s"},
+    ["Bear Egg"]={pet="Bear",rarity="Epic",income="$240/s"},
+    ["Brr Brr Patapim Egg"]={pet="Brr Brr Patapim",rarity="Legendary",income="$1.8K/s"},
+    ["Frog Egg"]={pet="Frog",rarity="Common",income="$3/s"},
+    ["Duckling Egg"]={pet="Duckling",rarity="Common",income="$4/s"},
+    ["Catfish Egg"]={pet="Catfish",rarity="Uncommon",income="$12/s"},
+    ["Turtle Egg"]={pet="Turtle",rarity="Rare",income="$60/s"},
+    ["Trulimero Trulicina Egg"]={pet="Trulimero Trulicina",rarity="Epic",income="$260/s"},
+    ["Swan Egg"]={pet="Swan",rarity="Epic",income="$320/s"},
+    ["Axolotl Egg"]={pet="Axolotl",rarity="Legendary",income="$2.8K/s"},
+    ["Leviathan Egg"]={pet="Leviathan",rarity="Cosmic",income="$220K/s"},
+    ["Jerboa Egg"]={pet="Jerboa",rarity="Common",income="$6/s"},
+    ["Fennec Egg"]={pet="Fennec",rarity="?",income="?"},
+    ["Camel Egg"]={pet="Camel",rarity="Rare",income="$75/s"},
+    ["Tob Tobi Tob Tob Egg"]={pet="Tob Tobi Tob Tob",rarity="?",income="?"},
+    ["Snake Egg"]={pet="Snake",rarity="?",income="?"},
+    ["Scorpion Egg"]={pet="Scorpion",rarity="Mythic",income="?"},
+    ["Sand Spider Egg"]={pet="Sand Spider",rarity="Mythic",income="$16K/s"},
+    ["Royal Sphinx Egg"]={pet="Royal Sphinx",rarity="?",income="?"},
+    ["Toucan Egg"]={pet="Toucan",rarity="Rare",income="$110/s"},
+    ["Chimpanzee Egg"]={pet="Chimpanzee",rarity="Rare",income="$90/s"},
+    ["Crocodile Egg"]={pet="Crocodile",rarity="Epic",income="$420/s"},
+    ["Gorilla Egg"]={pet="Gorilla",rarity="Legendary",income="$4.8K/s"},
+    ["Orangutini Ananassini Egg"]={pet="Orangutini Ananassini",rarity="Legendary",income="$5.5K/s"},
+    ["Spider Egg"]={pet="Spider",rarity="Mythic",income="$22K/s"},
+    ["Tiger Egg"]={pet="Tiger",rarity="?",income="?"},
+    ["King Snake Egg"]={pet="King Snake",rarity="Secret",income="$3.5M/s"},
+    ["Penguin Egg"]={pet="Penguin",rarity="?",income="?"},
+    ["Walrus Egg"]={pet="Walrus",rarity="Epic",income="$600/s"},
+    ["Polar Bear Egg"]={pet="Polar Bear",rarity="Legendary",income="$7K/s"},
+    ["Sabertooth Tiger Egg"]={pet="Sabertooth Tiger",rarity="Mythic",income="$35K/s"},
+    ["Mammoth Egg"]={pet="Mammoth",rarity="Mythic",income="$42K/s"},
+    ["King Mammoth Egg"]={pet="King Mammoth",rarity="Cosmic",income="$400K/s"},
+    ["Yeti Egg"]={pet="Yeti",rarity="?",income="?"},
+    ["Ice Dragon Egg"]={pet="Ice Dragon",rarity="Eternal",income="?"},
+    ["Lava Gecko Egg"]={pet="Lava Gecko",rarity="?",income="?"},
+    ["Lava Frog Egg"]={pet="Lava Frog",rarity="Epic",income="$850/s"},
+    ["Flaming Bull Egg"]={pet="Flaming Bull",rarity="Legendary",income="$9.5K/s"},
+    ["Lava Iguana Egg"]={pet="Lava Iguana",rarity="Legendary",income="$11K/s"},
+    ["Chillin Chilli Egg"]={pet="Chillin Chilli",rarity="Mythic",income="$55K/s"},
+    ["Cerberus Egg"]={pet="Cerberus",rarity="Secret",income="$8M/s"},
+    ["Phoenix Egg"]={pet="Phoenix",rarity="?",income="?"},
+    ["Lava Dragon Egg"]={pet="Lava Dragon",rarity="?",income="?"},
+    ["Parrotfish Egg"]={pet="Parrotfish",rarity="Rare",income="$220/s"},
+    ["Swordfish Egg"]={pet="Swordfish",rarity="Epic",income="$1.1K/s"},
+    ["Shark Egg"]={pet="Shark",rarity="Legendary",income="$15K/s"},
+    ["Orca Egg"]={pet="Orca",rarity="Mythic",income="$80K/s"},
+    ["Whale Shark Egg"]={pet="Whale Shark",rarity="Cosmic",income="$700K/s"},
+    ["Beluga Whale Egg"]={pet="Beluga Whale",rarity="Cosmic",income="$850K/s"},
+    ["Kraken Egg"]={pet="Kraken",rarity="?",income="?"},
+    ["Dodo Egg"]={pet="Dodo",rarity="?",income="?"},
+    ["Pterodactyl Egg"]={pet="Pterodactyl",rarity="?",income="?"},
+    ["Ankylosaurus Egg"]={pet="Ankylosaurus",rarity="Mythic",income="$120K/s"},
+    ["Triceratops Egg"]={pet="Triceratops",rarity="?",income="?"},
+    ["Bronto Egg"]={pet="Bronto",rarity="Cosmic",income="$1.5M/s"},
+    ["TRex Egg"]={pet="TRex",rarity="?",income="?"},
+    ["Cosmic Skeleton King Egg"]={pet="Cosmic Skeleton King",rarity="Divine",income="?"},
+    ["Dragon Egg"]={pet="Dragon",rarity="?",income="?"},
+    ["Crane Egg"]={pet="Crane",rarity="?",income="?"},
+    ["Nine-tailed Fox Egg"]={pet="Nine-tailed Fox",rarity="?",income="?"},
+    ["Gorilla King Egg"]={pet="Gorilla King",rarity="?",income="?"},
+}
+
+local Text = {
+    VN = {
+        title="Tnh-VN MENU", main="Menu Chính", mainDesc="Các chức năng chính",
+        esp="ESP Player", espDesc="Định vị người chơi", color="Màu ESP",
+        antiHit="Anti Hit", antiHitDesc="Bị đánh đứng yên, không ragdoll",
+        antiban="Antiban", antibanDesc="Giảm khả năng bị ban",
+        fly="Fly", flyDesc="Bật / tắt bay", flySpeed="Tốc độ Fly",
+        speed="Speed", speedDesc="Tốc độ chạy 1-500",
+        speedToggle="Bật Speed", speedToggleDesc="Bật / tắt tốc độ chạy",
+        fixlag="FixLag", fixlagDesc="Tối ưu game",
+        steal="Steal An Egg", language="Ngôn ngữ", languageDesc="Đổi ngôn ngữ",
+        update="Update", updateDesc="Thông báo update",
+        updateNotice="Sẽ thông báo update tiếp theo sau...", updateVersion="Phiên bản",
+        antichase="Anti Chase", sena="Sena",
+        blue="Xanh dương", red="Đỏ", pink="Hồng", green="Xanh lá",
+        yellow="Vàng", purple="Tím", white="Trắng",
+        eggLoc="Định Vị Egg & Giá Trị", eggScan="Quét Egg",
+        autoSteal="Auto Steal Egg", autoStealDesc="Teleport nhặt Egg → về Base (bất tử)",
+        prioritySecret="Ưu tiên Trứng Secret", prioritySecretDesc="Ưu tiên Egg Secret",
+        antiTrap="Anti Chống Bẫy", antiTrapDesc="Đi qua bẫy không dính",
+        status="Trạng thái", statusOff="Chưa hoạt động", statusOn="Đang hoạt động",
+        noEggFound="Không tìm thấy Egg."
+    },
+    EN = {
+        title="Tnh-VN MENU", main="Main Menu", mainDesc="Main utilities",
+        esp="ESP Player", espDesc="Locate players", color="ESP Color",
+        antiHit="Anti Hit", antiHitDesc="Stand still when hit",
+        antiban="Antiban", antibanDesc="Reduce ban risk",
+        fly="Fly", flyDesc="Toggle fly", flySpeed="Fly Speed",
+        speed="Speed", speedDesc="Run speed 1-500",
+        speedToggle="Speed", speedToggleDesc="Toggle run speed",
+        fixlag="FixLag", fixlagDesc="Optimize",
+        steal="Steal An Egg", language="Language", languageDesc="Change language",
+        update="Update", updateDesc="Update notifications",
+        updateNotice="Next update later...", updateVersion="Version",
+        antichase="Anti Chase", sena="Sena",
+        blue="Blue", red="Red", pink="Pink", green="Green",
+        yellow="Yellow", purple="Purple", white="White",
+        eggLoc="Egg Locator & Values", eggScan="Scan Eggs",
+        autoSteal="Auto Steal Egg", autoStealDesc="Teleport pickup → Base (invincible)",
+        prioritySecret="Priority Secret", prioritySecretDesc="Prioritize Secret",
+        antiTrap="Anti Trap", antiTrapDesc="Walk through traps",
+        status="Status", statusOff="Inactive", statusOn="Active",
+        noEggFound="No Egg found."
+    },
+    TH = {
+        title="Tnh-VN MENU", main="เมนูหลัก", mainDesc="ฟังก์ชันหลัก",
+        esp="ESP Player", espDesc="ระบุตำแหน่ง", color="สี ESP",
+        antiHit="Anti Hit", antiHitDesc="ยืนนิ่งเมื่อถูกตี",
+        antiban="Antiban", antibanDesc="ลดความเสี่ยงแบน",
+        fly="บิน", flyDesc="เปิด/ปิดการบิน", flySpeed="ความเร็วบิน",
+        speed="ความเร็ว", speedDesc="1-500",
+        speedToggle="เปิดความเร็ว", speedToggleDesc="เปิด/ปิด",
+        fixlag="FixLag", fixlagDesc="เพิ่มประสิทธิภาพ",
+        steal="Steal An Egg", language="ภาษา", languageDesc="เปลี่ยนภาษา",
+        update="อัปเดต", updateDesc="การแจ้งเตือน",
+        updateNotice="แจ้งภายหลัง...", updateVersion="เวอร์ชัน",
+        antichase="Anti Chase", sena="Sena",
+        blue="ฟ้า", red="แดง", pink="ชมพู", green="เขียว",
+        yellow="เหลือง", purple="ม่วง", white="ขาว",
+        eggLoc="ตำแหน่งไข่", eggScan="สแกนไข่",
+        autoSteal="Auto Steal Egg", autoStealDesc="เก็บไข่อัตโนมัติ",
+        prioritySecret="Secret ก่อน", prioritySecretDesc="ไข่ Secret ก่อน",
+        antiTrap="Anti Trap", antiTrapDesc="ผ่านกับดัก",
+        status="สถานะ", statusOff="ไม่ทำงาน", statusOn="ทำงานอยู่",
+        noEggFound="ไม่พบไข่"
+    },
+    KR = {
+        title="Tnh-VN MENU", main="메인 메뉴", mainDesc="주요 기능",
+        esp="ESP Player", espDesc="플레이어 표시", color="ESP 색상",
+        antiHit="Anti Hit", antiHitDesc="맞아도 제자리",
+        antiban="Antiban", antibanDesc="밴 위험 감소",
+        fly="비행", flyDesc="비행 토글", flySpeed="비행 속도",
+        speed="속도", speedDesc="1-500",
+        speedToggle="속도", speedToggleDesc="토글",
+        fixlag="FixLag", fixlagDesc="최적화",
+        steal="Steal An Egg", language="언어", languageDesc="언어 변경",
+        update="업데이트", updateDesc="알림",
+        updateNotice="나중에 알려드림...", updateVersion="버전",
+        antichase="Anti Chase", sena="Sena",
+        blue="파랑", red="빨강", pink="분홍", green="초록",
+        yellow="노랑", purple="보라", white="흰색",
+        eggLoc="알 위치", eggScan="알 스캔",
+        autoSteal="Auto Steal Egg", autoStealDesc="자동 획득",
+        prioritySecret="Secret 우선", prioritySecretDesc="Secret 알 우선",
+        antiTrap="Anti Trap", antiTrapDesc="함정 통과",
+        status="상태", statusOff="비활성", statusOn="활성",
+        noEggFound="알 없음"
+    },
+    CN = {
+        title="Tnh-VN MENU", main="主菜单", mainDesc="主要功能",
+        esp="ESP Player", espDesc="定位玩家", color="ESP颜色",
+        antiHit="Anti Hit", antiHitDesc="被打站住",
+        antiban="Antiban", antibanDesc="降低封号风险",
+        fly="飞行", flyDesc="开关飞行", flySpeed="飞行速度",
+        speed="速度", speedDesc="1-500",
+        speedToggle="速度", speedToggleDesc="开关",
+        fixlag="FixLag", fixlagDesc="优化",
+        steal="Steal An Egg", language="语言", languageDesc="更改语言",
+        update="更新", updateDesc="更新通知",
+        updateNotice="稍后通知...", updateVersion="版本",
+        antichase="Anti Chase", sena="Sena",
+        blue="蓝色", red="红色", pink="粉色", green="绿色",
+        yellow="黄色", purple="紫色", white="白色",
+        eggLoc="蛋位置", eggScan="扫描",
+        autoSteal="Auto Steal Egg", autoStealDesc="自动拾取",
+        prioritySecret="优先 Secret", prioritySecretDesc="优先 Secret",
+        antiTrap="Anti Trap", antiTrapDesc="穿过陷阱",
+        status="状态", statusOff="未激活", statusOn="激活中",
+        noEggFound="未找到蛋"
+    }
+}
+local function T(k) return Text[S.Language][k] end
+
+-- ==================================================
+-- GUI
+-- ==================================================
+local Gui = Instance.new("ScreenGui")
+Gui.Name="TnhVN_MENU"; Gui.ResetOnSpawn=false
+Gui.IgnoreGuiInset=true; Gui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
+pcall(function() Gui.Parent=gethui() end)
+if not Gui.Parent then Gui.Parent=LP:WaitForChild("PlayerGui") end
+
+local function Corner(o,r) local c=Instance.new("UICorner"); c.CornerRadius=UDim.new(0,r); c.Parent=o end
+local function Stroke(o,c,t) local s=Instance.new("UIStroke"); s.Color=c; s.Thickness=t or 1; s.Transparency=.35; s.Parent=o end
+local function Label(p,txt,size,pos)
+    local l=Instance.new("TextLabel"); l.BackgroundTransparency=1; l.Text=txt
+    l.TextColor3=Color3.fromRGB(240,240,240); l.TextSize=size; l.Font=Enum.Font.Gotham
+    l.TextXAlignment=Enum.TextXAlignment.Left; l.Position=pos; l.ZIndex=10; l.Parent=p
+    return l
+end
+
+local Notice=Label(Gui,"Tnh-VN MENU",13,UDim2.new(.5,-120,0,5))
+Notice.Size=UDim2.new(0,240,0,25); Notice.TextXAlignment=Enum.TextXAlignment.Center
+Notice.TextColor3=Color3.fromRGB(190,200,205)
+
+local Main=Instance.new("Frame")
+Main.Name="Main"; Main.Size=UDim2.new(0,700,0,470)
+Main.Position=UDim2.new(.5,-350,.5,-235)
+Main.BackgroundColor3=Color3.fromRGB(17,22,25); Main.BorderSizePixel=0
+Main.Active=true; Main.ZIndex=1; Main.Parent=Gui
+Corner(Main,16); Stroke(Main,Color3.fromRGB(75,85,90),1)
+
+local Top=Instance.new("Frame")
+Top.Size=UDim2.new(1,0,0,65); Top.BackgroundColor3=Color3.fromRGB(20,26,29)
+Top.BorderSizePixel=0; Top.Active=true; Top.ZIndex=3; Top.Parent=Main
+Corner(Top,16)
+local Title=Label(Top,T("title"),21,UDim2.new(0,22,0,9))
+Title.Size=UDim2.new(1,-150,0,28); Title.Font=Enum.Font.GothamMedium
+local Subtitle=Label(Top,"KeyVIP",12,UDim2.new(0,23,0,38))
+Subtitle.TextColor3=Color3.fromRGB(135,145,150)
+
+local Min=Instance.new("TextButton")
+Min.Size=UDim2.new(0,42,0,42); Min.Position=UDim2.new(1,-92,0,11)
+Min.BackgroundTransparency=1; Min.Text="−"; Min.TextSize=30
+Min.TextColor3=Color3.fromRGB(235,235,235); Min.Font=Enum.Font.Gotham
+Min.Active=true; Min.ZIndex=20; Min.Parent=Top
+
+local Close=Instance.new("TextButton")
+Close.Size=UDim2.new(0,42,0,42); Close.Position=UDim2.new(1,-48,0,11)
+Close.BackgroundTransparency=1; Close.Text="×"; Close.TextSize=30
+Close.TextColor3=Color3.fromRGB(235,235,235); Close.Font=Enum.Font.Gotham
+Close.Active=true; Close.ZIndex=20; Close.Parent=Top
+
+local drag,ds,sp
+Top.InputBegan:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then
+        drag=true; ds=i.Position; sp=Main.Position
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if drag and (i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseMovement) then
+        local d=i.Position-ds
+        Main.Position=UDim2.new(sp.X.Scale,sp.X.Offset+d.X,sp.Y.Scale,sp.Y.Offset+d.Y)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then drag=false end
+end)
+
+local Sidebar=Instance.new("Frame")
+Sidebar.Size=UDim2.new(0,170,1,-82); Sidebar.Position=UDim2.new(0,10,0,72)
+Sidebar.BackgroundColor3=Color3.fromRGB(21,27,30); Sidebar.BorderSizePixel=0
+Sidebar.Active=true; Sidebar.ZIndex=20; Sidebar.Parent=Main
+Corner(Sidebar,12)
+local SideList=Instance.new("Frame")
+SideList.Size=UDim2.new(1,-14,1,-14); SideList.Position=UDim2.new(0,7,0,7)
+SideList.BackgroundTransparency=1; SideList.Active=true; SideList.ZIndex=21; SideList.Parent=Sidebar
+local SideLayout=Instance.new("UIListLayout")
+SideLayout.Padding=UDim.new(0,6); SideLayout.HorizontalAlignment=Enum.HorizontalAlignment.Center
+SideLayout.SortOrder=Enum.SortOrder.LayoutOrder; SideLayout.Parent=SideList
+
+local Pages,Buttons={},{}
+local function Page(name)
+    local p=Instance.new("ScrollingFrame")
+    p.Name=name.."Page"; p.Size=UDim2.new(1,-195,1,-85)
+    p.Position=UDim2.new(0,185,0,75); p.BackgroundTransparency=1
+    p.BorderSizePixel=0; p.ScrollBarThickness=4
+    p.ScrollBarImageColor3=Color3.fromRGB(0,170,235)
+    p.Visible=false; p.Active=true; p.ZIndex=5; p.Parent=Main
+    local l=Instance.new("UIListLayout"); l.Padding=UDim.new(0,12); l.Parent=p
+    l:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        p.CanvasSize=UDim2.new(0,0,0,l.AbsoluteContentSize.Y+20)
+    end)
+    Pages[name]=p; return p
+end
+
+local MainPage=Page("Main")
+local FlyPage=Page("Fly")
+local FixPage=Page("FixLag")
+local StealPage=Page("StealAnEgg")
+local UpdatePage=Page("Update")
+local LangPage=Page("Language")
+
+local function SideButton(name,text,icon)
+    local b=Instance.new("TextButton")
+    b.Name=name; b.Size=UDim2.new(1,-10,0,44)
+    b.BackgroundColor3=Color3.fromRGB(29,36,40); b.BorderSizePixel=0
+    b.Text="  "..icon.."   "..text; b.TextColor3=Color3.fromRGB(225,230,232)
+    b.TextSize=13; b.Font=Enum.Font.GothamMedium
+    b.TextXAlignment=Enum.TextXAlignment.Left; b.AutoButtonColor=true
+    b.Active=true; b.Selectable=true; b.ZIndex=25; b.Parent=SideList
+    Corner(b,10); Buttons[name]=b; return b
+end
+
+local MB=SideButton("Main",T("main"),"⌂")
+local FB=SideButton("Fly","Fly","✈")
+local XB=SideButton("FixLag","FixLag","⚡")
+local SB=SideButton("StealAnEgg",T("steal"),"🥚")
+local UB=SideButton("Update",T("update"),"🔄")
+local LB=SideButton("Language",T("language"),"⚙")
+
+function OpenPage(name)
+    for n,p in pairs(Pages) do p.Visible=(n==name) end
+    for n,b in pairs(Buttons) do
+        b.BackgroundColor3=n==name and Color3.fromRGB(0,150,215) or Color3.fromRGB(29,36,40)
+    end
+end
+
+MB.MouseButton1Click:Connect(function() OpenPage("Main") end)
+FB.MouseButton1Click:Connect(function() OpenPage("Fly") end)
+XB.MouseButton1Click:Connect(function() OpenPage("FixLag") end)
+SB.MouseButton1Click:Connect(function() OpenPage("StealAnEgg") end)
+UB.MouseButton1Click:Connect(function() OpenPage("Update") end)
+LB.MouseButton1Click:Connect(function() OpenPage("Language") end)
+
+-- KEY SYSTEM
+local CorrectKey="Tnh-VN"; local KeyVerified=false
+local KeyFrame=Instance.new("Frame")
+KeyFrame.Size=UDim2.new(0,380,0,250); KeyFrame.Position=UDim2.new(.5,-190,.5,-125)
+KeyFrame.BackgroundColor3=Color3.fromRGB(17,22,25); KeyFrame.BorderSizePixel=0
+KeyFrame.Active=true; KeyFrame.ZIndex=100; KeyFrame.Parent=Gui
+Corner(KeyFrame,16); Stroke(KeyFrame,Color3.fromRGB(75,85,90),1)
+local KeyTitle=Instance.new("TextLabel"); KeyTitle.BackgroundTransparency=1
+KeyTitle.Size=UDim2.new(1,-30,0,35); KeyTitle.Position=UDim2.new(0,15,0,22)
+KeyTitle.Text="Tnh-VN MENU"; KeyTitle.TextColor3=Color3.fromRGB(240,240,240)
+KeyTitle.TextSize=24; KeyTitle.Font=Enum.Font.GothamMedium
+KeyTitle.TextXAlignment=Enum.TextXAlignment.Center; KeyTitle.ZIndex=101; KeyTitle.Parent=KeyFrame
+local KeySub=Instance.new("TextLabel"); KeySub.BackgroundTransparency=1
+KeySub.Size=UDim2.new(1,-30,0,25); KeySub.Position=UDim2.new(0,15,0,60)
+KeySub.Text="Nhập Key để tiếp tục"; KeySub.TextColor3=Color3.fromRGB(145,155,160)
+KeySub.TextSize=13; KeySub.Font=Enum.Font.Gotham
+KeySub.TextXAlignment=Enum.TextXAlignment.Center; KeySub.ZIndex=101; KeySub.Parent=KeyFrame
+local KeyBox=Instance.new("TextBox")
+KeyBox.Size=UDim2.new(1,-50,0,45); KeyBox.Position=UDim2.new(0,25,0,100)
+KeyBox.BackgroundColor3=Color3.fromRGB(27,34,38); KeyBox.BorderSizePixel=0
+KeyBox.Text=""; KeyBox.PlaceholderText="Dán Key vào đây..."
+KeyBox.PlaceholderColor3=Color3.fromRGB(110,120,125)
+KeyBox.TextColor3=Color3.fromRGB(240,240,240); KeyBox.TextSize=15
+KeyBox.Font=Enum.Font.Gotham; KeyBox.ClearTextOnFocus=false
+KeyBox.TextXAlignment=Enum.TextXAlignment.Center; KeyBox.ZIndex=101; KeyBox.Parent=KeyFrame
+Corner(KeyBox,10); Stroke(KeyBox,Color3.fromRGB(55,65,70),1)
+local ConfirmKey=Instance.new("TextButton")
+ConfirmKey.Size=UDim2.new(1,-50,0,42); ConfirmKey.Position=UDim2.new(0,25,0,158)
+ConfirmKey.BackgroundColor3=Color3.fromRGB(0,170,90); ConfirmKey.BorderSizePixel=0
+ConfirmKey.Text="Xác Nhận"; ConfirmKey.TextColor3=Color3.new(1,1,1)
+ConfirmKey.TextSize=14; ConfirmKey.Font=Enum.Font.GothamBold
+ConfirmKey.Active=true; ConfirmKey.ZIndex=101; ConfirmKey.Parent=KeyFrame
+Corner(ConfirmKey,10)
+local KeyStatus=Instance.new("TextLabel"); KeyStatus.BackgroundTransparency=1
+KeyStatus.Size=UDim2.new(1,-30,0,25); KeyStatus.Position=UDim2.new(0,15,0,208)
+KeyStatus.Text=""; KeyStatus.TextColor3=Color3.fromRGB(255,80,80)
+KeyStatus.TextSize=12; KeyStatus.Font=Enum.Font.Gotham
+KeyStatus.TextXAlignment=Enum.TextXAlignment.Center; KeyStatus.ZIndex=101; KeyStatus.Parent=KeyFrame
+
+local function VerifyKey()
+    if KeyBox.Text==CorrectKey then
+        KeyVerified=true; KeyStatus.Text="Key chính xác!"
+        KeyStatus.TextColor3=Color3.fromRGB(0,220,120)
+        task.wait(.35); KeyFrame.Visible=false; Main.Visible=true
+        Notice.Visible=true; OpenPage("Main")
+    else
+        KeyStatus.Text="Key không đúng!"; KeyStatus.TextColor3=Color3.fromRGB(255,75,75)
+        KeyBox.Text=""; KeyBox:CaptureFocus()
+    end
+end
+ConfirmKey.MouseButton1Click:Connect(VerifyKey)
+KeyBox.FocusLost:Connect(function(e) if e then VerifyKey() end end)
+Main.Visible=false; Notice.Visible=false; KeyFrame.Visible=true
+
+-- HELPERS
+local function PageHeader(parent,title,desc)
+    local h=Label(parent,title,29,UDim2.new(0,5,0,0))
+    h.Size=UDim2.new(1,-10,0,42); h.Font=Enum.Font.GothamMedium
+    local d=Label(parent,desc,13,UDim2.new(0,7,0,43))
+    d.Size=UDim2.new(1,-15,0,30); d.TextColor3=Color3.fromRGB(145,155,160)
+    local sp=Instance.new("Frame"); sp.Size=UDim2.new(1,0,0,76)
+    sp.BackgroundTransparency=1; sp.Parent=parent
+    return h,d
+end
+local function Row(parent,h)
+    local r=Instance.new("Frame")
+    r.Size=UDim2.new(1,-8,0,h); r.BackgroundColor3=Color3.fromRGB(25,31,34)
+    r.BorderSizePixel=0; r.ZIndex=6; r.Parent=parent
+    Corner(r,11); Stroke(r,Color3.fromRGB(55,65,70),1); return r
+end
+local function Toggle(parent,title,desc,callback)
+    local r=Row(parent,78)
+    local tl=Label(r,title,16,UDim2.new(0,18,0,8))
+    local dl=Label(r,desc,12,UDim2.new(0,18,0,40))
+    tl.Size=UDim2.new(1,-125,0,25); dl.Size=UDim2.new(1,-125,0,27)
+    dl.TextColor3=Color3.fromRGB(150,160,165)
+    local b=Instance.new("TextButton")
+    b.Size=UDim2.new(0,70,0,34); b.Position=UDim2.new(1,-88,.5,-17)
+    b.Text=""; b.BackgroundColor3=Color3.fromRGB(65,72,78)
+    b.Active=true; b.ZIndex=15; b.Parent=r; Corner(b,17)
+    local k=Instance.new("Frame")
+    k.Size=UDim2.new(0,26,0,26); k.Position=UDim2.new(0,4,.5,-13)
+    k.BackgroundColor3=Color3.fromRGB(220,225,228); k.ZIndex=16; k.Parent=b; Corner(k,13)
+    local on=false
+    local function Render()
+        if on then
+            b.BackgroundColor3=Color3.fromRGB(0,170,235)
+            k.BackgroundColor3=Color3.fromRGB(18,25,29)
+            k.Position=UDim2.new(1,-30,.5,-13)
+        else
+            b.BackgroundColor3=Color3.fromRGB(65,72,78)
+            k.BackgroundColor3=Color3.fromRGB(220,225,228)
+            k.Position=UDim2.new(0,4,.5,-13)
+        end
+    end
+    b.MouseButton1Click:Connect(function() on=not on; Render(); callback(on) end)
+    Render()
+    return {Row=r, Title=tl, Description=dl}
+end
+
+-- ==================================================
+-- EGG HELPERS
+-- ==================================================
+local function ParseIncome(str)
+    if not str then return 0 end
+    local num=tonumber((str:gsub("[^%d%.]",""))) or 0
+    local u=str:upper()
+    if u:find("K") then num=num*1e3 end
+    if u:find("M") then num=num*1e6 end
+    if u:find("B") then num=num*1e9 end
+    return num
+end
+
+local function GetEggInfo(eggName)
+    if not eggName or eggName=="" then return nil end
+    if EggData[eggName] then return EggData[eggName] end
+    if EggData[eggName.." Egg"] then return EggData[eggName.." Egg"] end
+    local low=eggName:lower()
+    -- exact
+    for k,v in pairs(EggData) do
+        if k:lower()==low then return v end
+    end
+    -- pet match
+    for k,v in pairs(EggData) do
+        if v.pet and v.pet:lower()==low then return v end
+    end
+    -- no "egg" suffix
+    local noEgg=low:gsub("%s*egg%s*$","")
+    for k,v in pairs(EggData) do
+        local kNoEgg=k:lower():gsub("%s*egg%s*$","")
+        if kNoEgg==noEgg then return v end
+    end
+    -- fuzzy
+    for k,v in pairs(EggData) do
+        local kLow=k:lower()
+        local petLow=(v.pet or ""):lower()
+        if #low>3 and low:find(kLow,1,true) then return v end
+        if petLow~="" and low:find(petLow,1,true) then return v end
+        if petLow~="" and petLow:find(low,1,true) and #low>3 then return v end
+    end
+    return nil
+end
+
+-- Đọc tên thật từ BillboardGui có sẵn của game
+local function ReadGameLabel(part)
+    local target = part
+    for depth=1,5 do
+        if not target then break end
+        for _, d in ipairs(target:GetDescendants()) do
+            if d:IsA("BillboardGui") and d.Name ~= "TnhVN_EggESP" then
+                for _, t in ipairs(d:GetDescendants()) do
+                    if t:IsA("TextLabel") and t.Text ~= "" then
+                        local txt = t.Text
+                        -- match "$XXX/s" hoặc "$X.XK/s"
+                        local petName, price = txt:match("^(.-)%s*[—%-–]%s*(%$[%d%.,]+[KMB]?/?s?)$")
+                        if petName and price then
+                            return petName:gsub("^%s+",""):gsub("%s+$",""), price
+                        end
+                        -- match "PetName — anything"
+                        local pn = txt:match("^(.-)%s*[—%-–]")
+                        if pn and #pn > 1 and #pn < 40 then
+                            return pn:gsub("^%s+",""):gsub("%s+$",""), txt
+                        end
+                    end
+                end
+            end
+        end
+        target = target.Parent
+    end
+    return nil, nil
+end
+
+local function ReadAttributeName(part)
+    local target = part
+    for depth=1,3 do
+        if not target then break end
+        for _, attrName in ipairs({"EggName","PetName","EggType","PetType","Name","Type","Pet","DisplayName"}) do
+            local ok, v = pcall(function() return target:GetAttribute(attrName) end)
+            if ok and typeof(v)=="string" and #v>1 and #v<40 then return v end
+        end
+        -- StringValue con
+        for _, c in ipairs(target:GetChildren()) do
+            if c:IsA("StringValue") and #c.Value>1 and #c.Value<40 then
+                return c.Value
+            end
+        end
+        target = target.Parent
+    end
+    return nil
+end
+
+local function ScanAllEggs()
+    local allEggs, seen = {}, {}
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not seen[obj] then
+            local n = obj.Name:lower()
+            if n:find("egg") or n:find("trứng") then
+                local anc, isChar = obj.Parent, false
+                for _=1,5 do
+                    if not anc or anc==Workspace then break end
+                    if anc:FindFirstChildOfClass("Humanoid") then isChar=true break end
+                    anc = anc.Parent
+                end
+                if not isChar then
+                    seen[obj] = true
+                    -- Ưu tiên đọc BillboardGui của game trước
+                    local realName, gameText = ReadGameLabel(obj)
+                    if not realName then
+                        realName = ReadAttributeName(obj)
+                    end
+                    if not realName or realName == "" then
+                        realName = obj.Name
+                    end
+                    local info = GetEggInfo(realName)
+                    table.insert(allEggs, {
+                        name = obj.Name,
+                        realName = realName,
+                        part = obj,
+                        info = info,
+                        gameText = gameText,
+                    })
+                end
+            end
+        end
+    end
+    return allEggs
+end
+
+-- ==================================================
+-- MENU CHÍNH
+-- ==================================================
+local MainHeader=PageHeader(MainPage,T("main"),T("mainDesc"))
+
+-- ESP PLAYER
+local ESPObjects={}
+local function AddESP(p)
+    if p==LP or ESPObjects[p] or not p.Character then return end
+    local h=Instance.new("Highlight")
+    h.Name="TnhVN_ESP"; h.Adornee=p.Character
+    h.FillColor=S.ESPColor; h.OutlineColor=S.ESPColor
+    h.FillTransparency=.78; h.OutlineTransparency=0
+    h.DepthMode=Enum.HighlightDepthMode.AlwaysOnTop
+    h.Parent=p.Character; ESPObjects[p]=h
+end
+local function UpdateESP()
+    for _,p in ipairs(Players:GetPlayers()) do
+        if p~=LP then
+            if S.ESP then
+                AddESP(p)
+                if ESPObjects[p] then
+                    ESPObjects[p].Enabled=true
+                    ESPObjects[p].FillColor=S.ESPColor
+                    ESPObjects[p].OutlineColor=S.ESPColor
+                end
+            elseif ESPObjects[p] then
+                ESPObjects[p].Enabled=false
+            end
+        end
+    end
+end
+Players.PlayerAdded:Connect(function(p)
+    p.CharacterAdded:Connect(function() task.wait(.5) if S.ESP then AddESP(p) end end)
+end)
+Players.PlayerRemoving:Connect(function(p)
+    if ESPObjects[p] then ESPObjects[p]:Destroy() ESPObjects[p]=nil end
+end)
+local ET=Toggle(MainPage,T("esp"),T("espDesc"),function(v) S.ESP=v; UpdateESP() end)
+
+-- ESP COLOR
+local ColorRow=Row(MainPage,58)
+local CL=Label(ColorRow,T("color"),15,UDim2.new(0,18,0,16))
+local ColorOpen=Instance.new("TextButton")
+ColorOpen.Size=UDim2.new(0,145,0,34); ColorOpen.Position=UDim2.new(1,-165,.5,-17)
+ColorOpen.Text=T("blue"); ColorOpen.TextColor3=Color3.new(1,1,1)
+ColorOpen.TextSize=12; ColorOpen.Font=Enum.Font.GothamMedium
+ColorOpen.BackgroundColor3=Color3.fromRGB(0,170,255)
+ColorOpen.Active=true; ColorOpen.ZIndex=15; ColorOpen.Parent=ColorRow
+Corner(ColorOpen,9)
+local ColorList=Instance.new("Frame")
+ColorList.Size=UDim2.new(1,-8,0,132); ColorList.BackgroundColor3=Color3.fromRGB(25,31,34)
+ColorList.BorderSizePixel=0; ColorList.Visible=false; ColorList.ZIndex=30; ColorList.Parent=MainPage
+Corner(ColorList,11); Stroke(ColorList,Color3.fromRGB(55,65,70),1)
+local ColorGrid=Instance.new("UIGridLayout")
+ColorGrid.CellSize=UDim2.new(0,125,0,42); ColorGrid.CellPadding=UDim2.new(0,8,0,8)
+ColorGrid.HorizontalAlignment=Enum.HorizontalAlignment.Center
+ColorGrid.VerticalAlignment=Enum.VerticalAlignment.Center; ColorGrid.Parent=ColorList
+local Colors={
+    {"blue",Color3.fromRGB(0,170,255)},{"red",Color3.fromRGB(255,55,55)},
+    {"pink",Color3.fromRGB(255,80,180)},{"green",Color3.fromRGB(50,220,100)},
+    {"yellow",Color3.fromRGB(255,220,40)},{"purple",Color3.fromRGB(180,80,255)},
+    {"white",Color3.fromRGB(245,245,245)}
+}
+local ColorButtons={}
+local function SetESPColor(index)
+    S.ESPColor=Colors[index][2]; ColorOpen.Text=T(Colors[index][1])
+    ColorOpen.BackgroundColor3=Colors[index][2]; UpdateESP()
+end
+for i,v in ipairs(Colors) do
+    local b=Instance.new("TextButton")
+    b.Text=T(v[1]); b.TextColor3=Color3.new(1,1,1); b.TextSize=12
+    b.Font=Enum.Font.GothamMedium; b.BackgroundColor3=v[2]
+    b.BorderSizePixel=0; b.Active=true; b.ZIndex=31; b.Parent=ColorList
+    Corner(b,8); ColorButtons[i]=b
+    b.MouseButton1Click:Connect(function() SetESPColor(i); ColorList.Visible=false end)
+end
+ColorOpen.MouseButton1Click:Connect(function() ColorList.Visible=not ColorList.Visible end)
+
+-- ==================================================
+-- ESP EGG
+-- ==================================================
+local EggESPTags={}
+
+local function GetRarityColor(rarity)
+    local r=(rarity or ""):lower()
+    if r=="secret" then return Color3.fromRGB(255,30,30) end
+    if r=="divine" or r=="eternal" then return Color3.fromRGB(255,120,255) end
+    if r=="cosmic" then return Color3.fromRGB(200,80,255) end
+    if r=="mythic" then return Color3.fromRGB(255,60,60) end
+    if r=="legendary" then return Color3.fromRGB(255,200,50) end
+    if r=="epic" then return Color3.fromRGB(200,100,255) end
+    if r=="rare" then return Color3.fromRGB(80,180,255) end
+    if r=="uncommon" then return Color3.fromRGB(80,255,120) end
+    return Color3.fromRGB(255,255,255)
+end
+
+local function CreateEggTag(part, eggName, info, gameText)
+    local labelText
+    if info and info.pet then
+        labelText = info.pet .. " — " .. (info.income or "?")
+    elseif gameText and gameText ~= "" then
+        labelText = gameText
+    else
+        labelText = eggName .. " — ?"
+    end
+    local color = GetRarityColor(info and info.rarity)
+
+    if EggESPTags[part] and EggESPTags[part].Parent then
+        local label = EggESPTags[part]:FindFirstChild("Label")
+        if label then
+            label.Text = labelText
+            label.TextColor3 = color
+        end
+        return
+    end
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name="TnhVN_EggESP"; billboard.Adornee=part
+    billboard.Size=UDim2.new(0,260,0,40)
+    billboard.StudsOffset=Vector3.new(0,3.5,0)
+    billboard.AlwaysOnTop=true; billboard.MaxDistance=5000
+    billboard.LightInfluence=0; billboard.Parent=part
+
+    local label = Instance.new("TextLabel")
+    label.Name="Label"; label.BackgroundTransparency=1
+    label.Size=UDim2.new(1,0,1,0); label.Font=Enum.Font.GothamBold
+    label.TextSize=17; label.TextStrokeTransparency=0
+    label.TextStrokeColor3=Color3.new(0,0,0)
+    label.TextXAlignment=Enum.TextXAlignment.Center
+    label.TextYAlignment=Enum.TextYAlignment.Center
+    label.Text = labelText; label.TextColor3 = color
+    label.Parent = billboard
+    EggESPTags[part] = billboard
+end
+
+local function ClearEggESP()
+    for part,tag in pairs(EggESPTags) do
+        if tag then tag:Destroy() end
+    end
+    EggESPTags = {}
+end
+
+local function UpdateEggESP()
+    if not S.ESPEgg then ClearEggESP(); return end
+    local eggs = ScanAllEggs()
+    local still = {}
+    for _, egg in ipairs(eggs) do
+        still[egg.part] = true
+        CreateEggTag(egg.part, egg.realName, egg.info, egg.gameText)
+    end
+    for part,tag in pairs(EggESPTags) do
+        if not still[part] or not part.Parent then
+            if tag then tag:Destroy() end
+            EggESPTags[part] = nil
+        end
+    end
+end
+
+local EggESPToggle = Toggle(MainPage, "ESP Egg",
+    "Hiện tên + giá tiền trên đầu trứng",
+    function(v)
+        S.ESPEgg = v
+        if v then task.spawn(UpdateEggESP) else ClearEggESP() end
+    end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if S.ESPEgg then pcall(UpdateEggESP) end
+    end
+end)
+
+-- ==================================================
+-- ANTI HIT
+-- ==================================================
+local AntiHitConnection,AntiHitForce,AntiHitLoop,AntiHitGyro
+local NO_STATES={
+    Enum.HumanoidStateType.Ragdoll,
+    Enum.HumanoidStateType.FallingDown,
+    Enum.HumanoidStateType.Physics,
+    Enum.HumanoidStateType.PlatformStanding,
+}
+
+local function ApplyAntiHit()
+    local c=LP.Character
+    local h=c and c:FindFirstChildOfClass("Humanoid")
+    if not c or not h then return end
+    for _,st in ipairs(NO_STATES) do
+        pcall(function() h:SetStateEnabled(st,false) end)
+    end
+    if AntiHitForce and AntiHitForce.Parent~=c then AntiHitForce=nil end
+    if not AntiHitForce then
+        AntiHitForce=Instance.new("ForceField")
+        AntiHitForce.Name="TnhVN_AntiHit"; AntiHitForce.Visible=false
+        AntiHitForce.Parent=c
+    end
+    local root=c:FindFirstChild("HumanoidRootPart")
+    if root then
+        if AntiHitGyro and AntiHitGyro.Parent~=root then AntiHitGyro=nil end
+        if not AntiHitGyro then
+            AntiHitGyro=Instance.new("BodyGyro")
+            AntiHitGyro.Name="TnhVN_AntiHitGyro"
+            AntiHitGyro.MaxTorque=Vector3.new(1e6,1e6,1e6)
+            AntiHitGyro.P=50000; AntiHitGyro.D=1000
+            AntiHitGyro.CFrame=root.CFrame; AntiHitGyro.Parent=root
+        end
+    end
+    if AntiHitLoop then AntiHitLoop:Disconnect() end
+    AntiHitLoop=RunService.Heartbeat:Connect(function()
+        if not S.AntiHit then return end
+        if S.AutoSteal or S.Fly then return end
+        local char=LP.Character
+        if not char then return end
+        local hum=char:FindFirstChildOfClass("Humanoid")
+        local rt=char:FindFirstChild("HumanoidRootPart")
+        if not hum or not rt then return end
+        if hum.Health<hum.MaxHealth then hum.Health=hum.MaxHealth end
+        hum.PlatformStand=false; hum.Sit=false; hum.AutoRotate=true
+        local st=hum:GetState()
+        if st==Enum.HumanoidStateType.Ragdoll
+        or st==Enum.HumanoidStateType.FallingDown
+        or st==Enum.HumanoidStateType.Physics
+        or st==Enum.HumanoidStateType.PlatformStanding then
+            pcall(function() hum:ChangeState(Enum.HumanoidStateType.GettingUp) end)
+        end
+        local vel=rt.AssemblyLinearVelocity
+        rt.AssemblyLinearVelocity=Vector3.new(0,vel.Y,0)
+        rt.AssemblyAngularVelocity=Vector3.zero
+        if AntiHitGyro and AntiHitGyro.Parent==rt then
+            local _,yaw=rt.CFrame:ToEulerAnglesYXZ()
+            AntiHitGyro.CFrame=CFrame.new(rt.Position)*CFrame.Angles(0,yaw,0)
+        end
+    end)
+end
+
+local function StopAntiHit()
+    if AntiHitConnection then AntiHitConnection:Disconnect() AntiHitConnection=nil end
+    if AntiHitLoop then AntiHitLoop:Disconnect() AntiHitLoop=nil end
+    if AntiHitForce then AntiHitForce:Destroy() AntiHitForce=nil end
+    if AntiHitGyro then AntiHitGyro:Destroy() AntiHitGyro=nil end
+    local c=LP.Character
+    local h=c and c:FindFirstChildOfClass("Humanoid")
+    if h then
+        for _,st in ipairs(NO_STATES) do
+            pcall(function() h:SetStateEnabled(st,true) end)
+        end
+    end
+end
+
+local function StartAntiHit()
+    StopAntiHit(); S.AntiHit=true; ApplyAntiHit()
+    AntiHitConnection=LP.CharacterAdded:Connect(function()
+        task.wait(.5)
+        if S.AntiHit then ApplyAntiHit() end
+    end)
+end
+
+local AHT=Toggle(MainPage,T("antiHit"),T("antiHitDesc"),function(v)
+    if v then StartAntiHit() else S.AntiHit=false StopAntiHit() end
+end)
+
+-- ANTIBAN
+local AntibanLoop
+local function StartAntiban()
+    S.Antiban=true
+    if AntibanLoop then AntibanLoop:Disconnect() end
+    AntibanLoop=RunService.Heartbeat:Connect(function()
+        if not S.Antiban then return end
+        local hum=LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            if not S.Speed and hum.WalkSpeed>25 then hum.WalkSpeed=16 end
+        end
+    end)
+end
+local function StopAntiban()
+    S.Antiban=false
+    if AntibanLoop then AntibanLoop:Disconnect() AntibanLoop=nil end
+end
+local ABT=Toggle(MainPage,T("antiban"),T("antibanDesc"),function(v)
+    if v then StartAntiban() else StopAntiban() end
+end)
+
+-- ==================================================
+-- FLY / SPEED
+-- ==================================================
+local FlyHeader=PageHeader(FlyPage,"Fly","Movement utilities")
+local FlyConnection
+local function StopFly()
+    S.Fly=false
+    if FlyConnection then FlyConnection:Disconnect() FlyConnection=nil end
+    local c=LP.Character
+    local r=c and c:FindFirstChild("HumanoidRootPart")
+    local h=c and c:FindFirstChildOfClass("Humanoid")
+    if r then
+        local bv=r:FindFirstChild("TnhVN_FlyVelocity")
+        local bg=r:FindFirstChild("TnhVN_FlyGyro")
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
+    end
+    if h then h.PlatformStand=false; h:ChangeState(Enum.HumanoidStateType.GettingUp) end
+end
+local function StartFly()
+    StopFly()
+    local c=LP.Character
+    local r=c and c:FindFirstChild("HumanoidRootPart")
+    local h=c and c:FindFirstChildOfClass("Humanoid")
+    if not r or not h then return end
+    S.Fly=true
+    local bv=Instance.new("BodyVelocity")
+    bv.Name="TnhVN_FlyVelocity"
+    bv.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+    bv.P=25000; bv.Velocity=Vector3.zero; bv.Parent=r
+    local bg=Instance.new("BodyGyro")
+    bg.Name="TnhVN_FlyGyro"
+    bg.MaxTorque=Vector3.new(math.huge,math.huge,math.huge)
+    bg.P=30000; bg.D=1000; bg.CFrame=r.CFrame; bg.Parent=r
+    h.PlatformStand=true
+    FlyConnection=RunService.RenderStepped:Connect(function()
+        if not S.Fly or not r.Parent or not h.Parent then StopFly() return end
+        local cam=Workspace.CurrentCamera
+        if not cam then return end
+        local md=h.MoveDirection; local look=cam.CFrame.LookVector
+        local move=Vector3.zero
+        if md.Magnitude>0 then
+            local horizontal=Vector3.new(md.X,0,md.Z)
+            if horizontal.Magnitude>0 then horizontal=horizontal.Unit end
+            move=Vector3.new(horizontal.X,look.Y,horizontal.Z)
+            if move.Magnitude>0 then move=move.Unit end
+        end
+        bv.Velocity=move*S.FlySpeed
+        bg.CFrame=CFrame.lookAt(r.Position,r.Position+look)
+    end)
+end
+local FT=Toggle(FlyPage,T("fly"),T("flyDesc"),function(v)
+    if v then StartFly() else StopFly() end
+end)
+
+local FlySpeedRow=Row(FlyPage,95)
+local FlySpeedTitle=Label(FlySpeedRow,T("flySpeed"),15,UDim2.new(0,18,0,11))
+local FlySpeedValue=Label(FlySpeedRow,tostring(S.FlySpeed),13,UDim2.new(1,-80,0,11))
+FlySpeedValue.Size=UDim2.new(0,60,0,22)
+FlySpeedValue.TextXAlignment=Enum.TextXAlignment.Right
+FlySpeedValue.TextColor3=Color3.fromRGB(0,190,255)
+local FlyBar=Instance.new("Frame")
+FlyBar.Size=UDim2.new(1,-36,0,8); FlyBar.Position=UDim2.new(0,18,1,-25)
+FlyBar.BackgroundColor3=Color3.fromRGB(55,65,72)
+FlyBar.Active=true; FlyBar.ZIndex=12; FlyBar.Parent=FlySpeedRow
+Corner(FlyBar,4)
+local FlyFill=Instance.new("Frame")
+FlyFill.Size=UDim2.new(S.FlySpeed/500,0,1,0)
+FlyFill.BackgroundColor3=Color3.fromRGB(0,170,235); FlyFill.ZIndex=13
+FlyFill.Parent=FlyBar; Corner(FlyFill,4)
+local FlyKnob=Instance.new("Frame")
+FlyKnob.Size=UDim2.new(0,17,0,17); FlyKnob.AnchorPoint=Vector2.new(.5,.5)
+FlyKnob.Position=UDim2.new(S.FlySpeed/500,0,.5,0)
+FlyKnob.BackgroundColor3=Color3.fromRGB(240,240,240); FlyKnob.ZIndex=14
+FlyKnob.Parent=FlyBar; Corner(FlyKnob,9)
+local FlyDragging=false
+local function SetFlySpeed(x)
+    local p=math.clamp((x-FlyBar.AbsolutePosition.X)/FlyBar.AbsoluteSize.X,0,1)
+    S.FlySpeed=math.clamp(math.floor(p*499)+1,1,500)
+    FlySpeedValue.Text=tostring(S.FlySpeed)
+    FlyFill.Size=UDim2.new(S.FlySpeed/500,0,1,0)
+    FlyKnob.Position=UDim2.new(S.FlySpeed/500,0,.5,0)
+end
+FlyBar.InputBegan:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then
+        FlyDragging=true SetFlySpeed(i.Position.X)
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if FlyDragging and (i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseMovement) then
+        SetFlySpeed(i.Position.X)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then FlyDragging=false end
+end)
+
+local SpeedHeader=PageHeader(FlyPage,"Speed","Run speed utilities")
+local SpeedConnection
+local SavedWalkSpeed=nil
+local function GetHumanoid() local c=LP.Character; return c and c:FindFirstChildOfClass("Humanoid") end
+local function StartSpeed()
+    if SpeedConnection then SpeedConnection:Disconnect() SpeedConnection=nil end
+    local h=GetHumanoid(); if h then SavedWalkSpeed=h.WalkSpeed end
+    S.Speed=true
+    SpeedConnection=RunService.Heartbeat:Connect(function()
+        if not S.Speed then return end
+        local humanoid=GetHumanoid()
+        if humanoid then humanoid.WalkSpeed=S.SpeedValue end
+    end)
+end
+local function StopSpeed()
+    S.Speed=false
+    if SpeedConnection then SpeedConnection:Disconnect() SpeedConnection=nil end
+    local h=GetHumanoid(); if h then h.WalkSpeed=SavedWalkSpeed or 16 end
+    SavedWalkSpeed=nil
+end
+LP.CharacterAdded:Connect(function()
+    task.wait(.5)
+    if S.Speed then local h=GetHumanoid() if h then h.WalkSpeed=S.SpeedValue end end
+    if S.Fly then StartFly() end
+    if S.AntiHit then ApplyAntiHit() end
+end)
+local SpeedToggle=Toggle(FlyPage,T("speedToggle"),T("speedToggleDesc"),function(v)
+    if v then StartSpeed() else StopSpeed() end
+end)
+
+local SpeedRow=Row(FlyPage,95)
+local SpeedTitle=Label(SpeedRow,T("speed"),15,UDim2.new(0,18,0,11))
+local SpeedValue=Label(SpeedRow,tostring(S.SpeedValue),13,UDim2.new(1,-80,0,11))
+SpeedValue.Size=UDim2.new(0,60,0,22)
+SpeedValue.TextXAlignment=Enum.TextXAlignment.Right
+SpeedValue.TextColor3=Color3.fromRGB(0,190,255)
+local SpeedBar=Instance.new("Frame")
+SpeedBar.Size=UDim2.new(1,-36,0,8); SpeedBar.Position=UDim2.new(0,18,1,-25)
+SpeedBar.BackgroundColor3=Color3.fromRGB(55,65,72)
+SpeedBar.Active=true; SpeedBar.ZIndex=12; SpeedBar.Parent=SpeedRow
+Corner(SpeedBar,4)
+local SpeedFill=Instance.new("Frame")
+SpeedFill.Size=UDim2.new(S.SpeedValue/500,0,1,0)
+SpeedFill.BackgroundColor3=Color3.fromRGB(0,170,235); SpeedFill.ZIndex=13
+SpeedFill.Parent=SpeedBar; Corner(SpeedFill,4)
+local SpeedKnob=Instance.new("Frame")
+SpeedKnob.Size=UDim2.new(0,17,0,17); SpeedKnob.AnchorPoint=Vector2.new(.5,.5)
+SpeedKnob.Position=UDim2.new(S.SpeedValue/500,0,.5,0)
+SpeedKnob.BackgroundColor3=Color3.fromRGB(240,240,240); SpeedKnob.ZIndex=14
+SpeedKnob.Parent=SpeedBar; Corner(SpeedKnob,9)
+local SpeedDragging=false
+local function SetRunSpeed(x)
+    local p=math.clamp((x-SpeedBar.AbsolutePosition.X)/SpeedBar.AbsoluteSize.X,0,1)
+    S.SpeedValue=math.clamp(math.floor(p*499)+1,1,500)
+    SpeedValue.Text=tostring(S.SpeedValue)
+    SpeedFill.Size=UDim2.new(S.SpeedValue/500,0,1,0)
+    SpeedKnob.Position=UDim2.new(S.SpeedValue/500,0,.5,0)
+end
+SpeedBar.InputBegan:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then
+        SpeedDragging=true SetRunSpeed(i.Position.X)
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if SpeedDragging and (i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseMovement) then
+        SetRunSpeed(i.Position.X)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then SpeedDragging=false end
+end)
+
+-- FIX LAG
+local FixHeader=PageHeader(FixPage,"FixLag","Performance utilities")
+local Saved={}
+local FixConnection
+local function DisableEffect(o)
+    if o:IsA("ParticleEmitter") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("Smoke")
+    or o:IsA("Fire") or o:IsA("Sparkles") or o:IsA("PointLight")
+    or o:IsA("SpotLight") or o:IsA("SurfaceLight") then
+        if Saved[o]==nil then Saved[o]=o.Enabled end
+        pcall(function() o.Enabled=false end)
+    end
+    if o:IsA("BasePart") then
+        if Saved[o]==nil then Saved[o]={CastShadow=o.CastShadow,Material=o.Material} end
+        pcall(function()
+            o.CastShadow=false
+            if o.Material~=Enum.Material.Water then o.Material=Enum.Material.Plastic end
+        end)
+    end
+end
+local function StartFix()
+    S.FixLag=true
+    for _,o in ipairs(Workspace:GetDescendants()) do DisableEffect(o) end
+    pcall(function()
+        Saved.GlobalShadows=Lighting.GlobalShadows; Lighting.GlobalShadows=false
+        Saved.EnvironmentDiffuseScale=Lighting.EnvironmentDiffuseScale; Lighting.EnvironmentDiffuseScale=0
+        Saved.EnvironmentSpecularScale=Lighting.EnvironmentSpecularScale; Lighting.EnvironmentSpecularScale=0
+        Saved.Brightness=Lighting.Brightness; Lighting.Brightness=1
+    end)
+    pcall(function()
+        if Workspace.Terrain then
+            Saved.WaterWaveSize=Workspace.Terrain.WaterWaveSize; Workspace.Terrain.WaterWaveSize=0
+            Saved.WaterWaveSpeed=Workspace.Terrain.WaterWaveSpeed; Workspace.Terrain.WaterWaveSpeed=0
+            Saved.WaterReflectance=Workspace.Terrain.WaterReflectance; Workspace.Terrain.WaterReflectance=0
+        end
+    end)
+    FixConnection=Workspace.DescendantAdded:Connect(function(o)
+        if S.FixLag then DisableEffect(o) end
+    end)
+end
+local function StopFix()
+    S.FixLag=false
+    if FixConnection then FixConnection:Disconnect() FixConnection=nil end
+    for o,v in pairs(Saved) do
+        if typeof(o)=="Instance" and o.Parent then
+            pcall(function()
+                if v.CastShadow~=nil then o.CastShadow=v.CastShadow end
+                if v.Material~=nil then o.Material=v.Material end
+                if v==true or v==false then o.Enabled=v end
+            end)
+        end
+    end
+    pcall(function()
+        if Saved.GlobalShadows~=nil then Lighting.GlobalShadows=Saved.GlobalShadows end
+        if Saved.EnvironmentDiffuseScale~=nil then Lighting.EnvironmentDiffuseScale=Saved.EnvironmentDiffuseScale end
+        if Saved.EnvironmentSpecularScale~=nil then Lighting.EnvironmentSpecularScale=Saved.EnvironmentSpecularScale end
+        if Saved.Brightness~=nil then Lighting.Brightness=Saved.Brightness end
+    end)
+    Saved={}
+end
+local XT=Toggle(FixPage,T("fixlag"),T("fixlagDesc"),function(v)
+    if v then StartFix() else StopFix() end
+end)
+
+-- ==================================================
+-- STEAL AN EGG
+-- ==================================================
+local StealHeader=PageHeader(StealPage,T("steal"),"Steal An Egg utilities")
+local StatusRow=Row(StealPage,48)
+local StatusLabel=Label(StatusRow,T("status")..": "..T("statusOff"),14,UDim2.new(0,18,0,12))
+StatusLabel.TextColor3=Color3.fromRGB(150,160,165)
+
+local EggListRow=Row(StealPage,220)
+local EggListTitle=Label(EggListRow,T("eggLoc"),15,UDim2.new(0,18,0,10))
+local EggListText=Label(EggListRow,"Đang tải...",11,UDim2.new(0,18,0,35))
+EggListText.TextColor3=Color3.fromRGB(140,150,155)
+EggListText.Size=UDim2.new(1,-36,1,-50)
+EggListText.TextWrapped=true; EggListText.TextYAlignment=Enum.TextYAlignment.Top
+EggListText.Font=Enum.Font.Code
+
+local function TryPickupEgg(eggPart)
+    if not eggPart or not eggPart.Parent then return false end
+    local prompt=eggPart:FindFirstChildOfClass("ProximityPrompt")
+    if not prompt and eggPart.Parent then
+        prompt=eggPart.Parent:FindFirstChildOfClass("ProximityPrompt")
+    end
+    if not prompt then
+        for _,d in ipairs(eggPart:GetDescendants()) do
+            if d:IsA("ProximityPrompt") then prompt=d break end
+        end
+    end
+    if not prompt and eggPart.Parent then
+        for _,d in ipairs(eggPart.Parent:GetDescendants()) do
+            if d:IsA("ProximityPrompt") then prompt=d break end
+        end
+    end
+    if prompt then
+        pcall(function()
+            if fireproximityprompt then
+                fireproximityprompt(prompt,0)
+            else
+                prompt:InputHoldBegin()
+                task.wait(math.max(prompt.HoldDuration,0.05)+0.05)
+                prompt:InputHoldEnd()
+            end
+        end)
+        return true
+    end
+    local cd=eggPart:FindFirstChildOfClass("ClickDetector")
+        or (eggPart.Parent and eggPart.Parent:FindFirstChildOfClass("ClickDetector"))
+    if cd and fireclickdetector then
+        pcall(fireclickdetector,cd)
+        return true
+    end
+    local char=LP.Character
+    local root=char and char:FindFirstChild("HumanoidRootPart")
+    if root and firetouchinterest then
+        pcall(function()
+            firetouchinterest(root,eggPart,0)
+            task.wait(0.05)
+            firetouchinterest(root,eggPart,1)
+        end)
+        return true
+    end
+    return false
+end
+
+local function UpdateEggList()
+    local eggs=ScanAllEggs()
+    if #eggs==0 then EggListText.Text=T("noEggFound"); return end
+    local char=LP.Character
+    local root=char and char:FindFirstChild("HumanoidRootPart")
+    table.sort(eggs,function(a,b)
+        return ParseIncome((a.info or {}).income)>ParseIncome((b.info or {}).income)
+    end)
+    local text=""
+    for i,egg in ipairs(eggs) do
+        if i>15 then text=text.."\n... +"..(#eggs-15).." egg khác" break end
+        local info=egg.info or {}
+        local dist=root and math.floor((egg.part.Position-root.Position).Magnitude) or 0
+        text=text.."• "..(egg.realName or egg.name)
+            .."\n   "..(info.income or "?").." | "..(info.rarity or "?").." | "..dist.."m\n"
+    end
+    EggListText.Text=text
+end
+
+task.spawn(function()
+    while task.wait(3) do
+        if StealPage.Visible and not S.AutoSteal then
+            pcall(UpdateEggList)
+        end
+    end
+end)
+
+local ScanRow=Row(StealPage,55)
+local ScanBtn=Instance.new("TextButton")
+ScanBtn.Size=UDim2.new(1,-36,0,36); ScanBtn.Position=UDim2.new(0,18,.5,-18)
+ScanBtn.BackgroundColor3=Color3.fromRGB(0,150,215)
+ScanBtn.Text=T("eggScan"); ScanBtn.TextColor3=Color3.new(1,1,1)
+ScanBtn.TextSize=14; ScanBtn.Font=Enum.Font.GothamBold
+ScanBtn.Active=true; ScanBtn.ZIndex=15; ScanBtn.Parent=ScanRow
+Corner(ScanBtn,9)
+ScanBtn.MouseButton1Click:Connect(function() pcall(UpdateEggList) end)
+
+local PriorityToggle=Toggle(StealPage,T("prioritySecret"),T("prioritySecretDesc"),function(v)
+    S.PrioritySecret=v
+end)
+
+-- ==================================================
+-- BASE FINDER
+-- ==================================================
+local CachedBase = nil
+local function FindBasePosition()
+    if CachedBase then return CachedBase end
+    -- 1) SpawnLocation có tag player
+    for _, o in ipairs(Workspace:GetDescendants()) do
+        if o:IsA("SpawnLocation") then
+            CachedBase = o.Position
+            return CachedBase
+        end
+    end
+    -- 2) Folder có tên chứa tên player
+    local lname = LP.Name:lower()
+    for _, o in ipairs(Workspace:GetChildren()) do
+        if o:IsA("Model") or o:IsA("Folder") then
+            if o.Name:lower():find(lname, 1, true) then
+                local p = o.PrimaryPart or o:FindFirstChildWhichIsA("BasePart")
+                if p then CachedBase = p.Position; return CachedBase end
+            end
+        end
+    end
+    -- 3) Folder "Bases"/"Pens"
+    for _, folderName in ipairs({"Bases","Pens","Base","Spawns","Plots"}) do
+        local f = Workspace:FindFirstChild(folderName)
+        if f then
+            for _, o in ipairs(f:GetChildren()) do
+                if o.Name:lower():find(lname, 1, true) then
+                    local p = o.PrimaryPart or o:FindFirstChildWhichIsA("BasePart")
+                    if p then CachedBase = p.Position; return CachedBase end
+                end
+            end
+        end
+    end
+    -- 4) Fallback: gần SpawnLocation đầu tiên
+    return Vector3.new(0, 50, 0)
+end
+
+-- Kiểm tra có đang cầm trứng không
+local function IsCarryingEgg()
+    -- Attributes trên LocalPlayer
+    for _, a in ipairs({"HasEgg","CarryingEgg","HasPet","CarryEgg","Holding","IsCarrying","Egg","EggName","Carrying"}) do
+        local ok, v = pcall(function() return LP:GetAttribute(a) end)
+        if ok and v ~= nil and v ~= false and v ~= "" then return true end
+    end
+    -- Character chứa trứng
+    local char = LP.Character
+    if char then
+        for _, o in ipairs(char:GetChildren()) do
+            local n = o.Name:lower()
+            if (n:find("egg") or n:find("carry") or n:find("hold")) and not o:IsA("Humanoid") then
+                return true
+            end
+        end
+    end
+    -- Backpack có trứng
+    local bp = LP:FindFirstChildOfClass("Backpack")
+    if bp then
+        for _, o in ipairs(bp:GetChildren()) do
+            if o.Name:lower():find("egg") then return true end
+        end
+    end
+    return false
+end
+
+-- Match với priority list
+local function EggMatchesPriority(egg)
+    if not next(S.PriorityEggs) then return true end -- không chọn gì = lấy tất cả
+    local candidates = {}
+    if egg.realName then table.insert(candidates, egg.realName:lower()) end
+    if egg.name then table.insert(candidates, egg.name:lower()) end
+    if egg.info and egg.info.pet then table.insert(candidates, egg.info.pet:lower()) end
+    for prioName, _ in pairs(S.PriorityEggs) do
+        local p = prioName:lower()
+        local pNoEgg = p:gsub("%s*egg%s*$", "")
+        for _, c in ipairs(candidates) do
+            local cNoEgg = c:gsub("%s*egg%s*$", "")
+            if c == p or c == pNoEgg or cNoEgg == p or cNoEgg == pNoEgg then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+-- ==================================================
+-- AUTO STEAL EGG (mới: teleport → nhặt → về base + bất tử)
+-- ==================================================
+local AutoStealConnection
+local LastPickupAttempt = 0
+local CARRY_IMMUNE_FORCE = nil
+
+local function EnableCarryImmune()
+    local char = LP.Character
+    if not char then return end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        for _, st in ipairs(NO_STATES) do
+            pcall(function() hum:SetStateEnabled(st, false) end)
+        end
+    end
+    if not CARRY_IMMUNE_FORCE or CARRY_IMMUNE_FORCE.Parent ~= char then
+        if CARRY_IMMUNE_FORCE then CARRY_IMMUNE_FORCE:Destroy() end
+        CARRY_IMMUNE_FORCE = Instance.new("ForceField")
+        CARRY_IMMUNE_FORCE.Name = "TnhVN_CarryImmune"
+        CARRY_IMMUNE_FORCE.Visible = false
+        CARRY_IMMUNE_FORCE.Parent = char
+    end
+end
+
+local function DisableCarryImmune()
+    if CARRY_IMMUNE_FORCE then CARRY_IMMUNE_FORCE:Destroy() CARRY_IMMUNE_FORCE = nil end
+    local char = LP.Character
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    if hum and not S.AntiHit then
+        for _, st in ipairs(NO_STATES) do
+            pcall(function() hum:SetStateEnabled(st, true) end)
+        end
+    end
+end
+
+local function FindBestEgg()
+    local char = LP.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return nil end
+    local all = ScanAllEggs()
+    if #all == 0 then return nil end
+    local best, bestScore = nil, -math.huge
+    for _, egg in ipairs(all) do
+        if egg.part and egg.part.Parent and EggMatchesPriority(egg) then
+            local dist = (egg.part.Position - root.Position).Magnitude
+            local info = egg.info or {}
+            local score = -dist
+            if S.PrioritySecret then
+                local r = (info.rarity or ""):lower()
+                if r == "secret" or r == "mythic" or r == "cosmic"
+                or r == "divine" or r == "eternal" then
+                    score = score + 1e9
+                end
+            end
+            score = score + ParseIncome(info.income) * 100
+            if score > bestScore then bestScore, best = score, egg end
+        end
+    end
+    return best
+end
+
+local function StartAutoSteal()
+    S.AutoSteal = true
+    StatusLabel.Text = T("status") .. ": " .. T("statusOn")
+    StatusLabel.TextColor3 = Color3.fromRGB(0, 220, 100)
+
+    -- warm up base cache
+    FindBasePosition()
+
+    if AutoStealConnection then AutoStealConnection:Disconnect() end
+    AutoStealConnection = RunService.Heartbeat:Connect(function()
+        if not S.AutoSteal then return end
+        local char = LP.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if not root or not hum then return end
+
+        -- Nếu đang cầm trứng → quay về base + bất tử
+        if IsCarryingEgg() then
+            EnableCarryImmune()
+            -- Heal mỗi frame
+            if hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
+
+            local base = FindBasePosition()
+            local dist = (base - root.Position).Magnitude
+            StatusLabel.Text = T("status") .. ": Đang mang về Base... (" .. math.floor(dist) .. "m)"
+            StatusLabel.TextColor3 = Color3.fromRGB(255, 200, 80)
+
+            if dist > 8 then
+                local dir = base - root.Position
+                local step = math.min(dir.Magnitude - 4, 80)
+                local newPos = root.Position + dir.Unit * step
+                pcall(function()
+                    root.CFrame = CFrame.new(newPos + Vector3.new(0, 2.5, 0))
+                end)
+                root.AssemblyLinearVelocity = Vector3.zero
+            else
+                StatusLabel.Text = T("status") .. ": Đã về Base!"
+                StatusLabel.TextColor3 = Color3.fromRGB(0, 220, 100)
+            end
+            return
+        else
+            DisableCarryImmune()
+        end
+
+        -- Chưa cầm → tìm trứng
+        local target = FindBestEgg()
+        if not target then
+            StatusLabel.Text = T("status") .. ": Không có trứng match"
+            StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+            return
+        end
+
+        local pos = target.part.Position
+        local dist = (pos - root.Position).Magnitude
+        local info = target.info or {}
+        local nameDisplay = target.realName or target.name
+        StatusLabel.Text = T("status") .. ": → " .. nameDisplay
+            .. " (" .. (info.income or "?") .. ") " .. math.floor(dist) .. "m"
+        StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+
+        if dist > 4 then
+            -- Teleport từng bước 70 studs
+            local dir = pos - root.Position
+            local step = math.min(dir.Magnitude - 3, 70)
+            local newPos = root.Position + dir.Unit * step
+            pcall(function()
+                root.CFrame = CFrame.new(newPos + Vector3.new(0, 2.5, 0))
+            end)
+            root.AssemblyLinearVelocity = Vector3.zero
+        else
+            -- Đang sát trứng → nhặt
+            local now = tick()
+            if now - LastPickupAttempt > 0.12 then
+                LastPickupAttempt = now
+                TryPickupEgg(target.part)
+            end
+            -- Giữ nguyên vị trí để prompt fire
+            root.AssemblyLinearVelocity = Vector3.zero
+        end
+    end)
+end
+
+local function StopAutoSteal()
+    S.AutoSteal = false
+    if AutoStealConnection then
+        AutoStealConnection:Disconnect()
+        AutoStealConnection = nil
+    end
+    DisableCarryImmune()
+    StatusLabel.Text = T("status") .. ": " .. T("statusOff")
+    StatusLabel.TextColor3 = Color3.fromRGB(150, 160, 165)
+end
+
+local AutoStealToggle=Toggle(StealPage,T("autoSteal"),T("autoStealDesc"),function(v)
+    if v then StartAutoSteal() else StopAutoSteal() end
+end)
+
+-- ==================================================
+-- PRIORITY EGG LIST (chọn nhiều trứng)
+-- ==================================================
+local PriorityListRow = Row(StealPage, 340)
+local PriorityListTitle = Label(PriorityListRow, "Danh mục trứng ưu tiên",
+    15, UDim2.new(0, 18, 0, 10))
+PriorityListTitle.Font = Enum.Font.GothamMedium
+local PriorityListDesc = Label(PriorityListRow,
+    "Tick để Auto Steal chỉ nhặt trứng đã chọn (không tick = nhặt tất cả)",
+    11, UDim2.new(0, 18, 0, 34))
+PriorityListDesc.TextColor3 = Color3.fromRGB(140, 150, 155)
+
+local PriorityScroll = Instance.new("ScrollingFrame")
+PriorityScroll.Size = UDim2.new(1, -36, 1, -75)
+PriorityScroll.Position = UDim2.new(0, 18, 0, 65)
+PriorityScroll.BackgroundColor3 = Color3.fromRGB(20, 25, 28)
+PriorityScroll.BorderSizePixel = 0
+PriorityScroll.ScrollBarThickness = 4
+PriorityScroll.ScrollBarImageColor3 = Color3.fromRGB(0, 170, 235)
+PriorityScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+PriorityScroll.Parent = PriorityListRow
+Corner(PriorityScroll, 8)
+
+local PList = Instance.new("UIListLayout")
+PList.Padding = UDim.new(0, 3)
+PList.Parent = PriorityScroll
+
+-- Sort eggs by income desc
+local SortedEggNames = {}
+for name, _ in pairs(EggData) do table.insert(SortedEggNames, name) end
+table.sort(SortedEggNames, function(a, b)
+    return ParseIncome(EggData[a].income) > ParseIncome(EggData[b].income)
+end)
+
+local PriorityButtons = {}
+
+-- Nút "Chọn tất cả" / "Bỏ chọn tất cả"
+local TopRow = Instance.new("Frame")
+TopRow.Size = UDim2.new(1, -10, 0, 26)
+TopRow.BackgroundTransparency = 1
+TopRow.Parent = PriorityScroll
+
+local SelectAllBtn = Instance.new("TextButton")
+SelectAllBtn.Size = UDim2.new(0, 100, 0, 24)
+SelectAllBtn.Position = UDim2.new(0, 0, 0, 0)
+SelectAllBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 60)
+SelectAllBtn.BorderSizePixel = 0
+SelectAllBtn.Text = "Chọn tất cả"
+SelectAllBtn.TextColor3 = Color3.new(1, 1, 1)
+SelectAllBtn.TextSize = 11
+SelectAllBtn.Font = Enum.Font.GothamBold
+SelectAllBtn.Parent = TopRow
+Corner(SelectAllBtn, 6)
+
+local ClearAllBtn = Instance.new("TextButton")
+ClearAllBtn.Size = UDim2.new(0, 100, 0, 24)
+ClearAllBtn.Position = UDim2.new(0, 110, 0, 0)
+ClearAllBtn.BackgroundColor3 = Color3.fromRGB(160, 40, 40)
+ClearAllBtn.BorderSizePixel = 0
+ClearAllBtn.Text = "Bỏ chọn tất cả"
+ClearAllBtn.TextColor3 = Color3.new(1, 1, 1)
+ClearAllBtn.TextSize = 11
+ClearAllBtn.Font = Enum.Font.GothamBold
+ClearAllBtn.Parent = TopRow
+Corner(ClearAllBtn, 6)
+
+for _, eggName in ipairs(SortedEggNames) do
+    local info = EggData[eggName]
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 26)
+    btn.BackgroundColor3 = Color3.fromRGB(35, 42, 48)
+    btn.BorderSizePixel = 0
+    btn.Text = "  ☐  " .. eggName .. "   " .. (info.income or "?")
+    btn.TextColor3 = Color3.fromRGB(200, 210, 215)
+    btn.TextSize = 11
+    btn.Font = Enum.Font.Gotham
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    btn.Active = true
+    btn.Parent = PriorityScroll
+    Corner(btn, 6)
+
+    local selected = false
+    btn.MouseButton1Click:Connect(function()
+        selected = not selected
+        if selected then
+            S.PriorityEggs[eggName] = true
+            btn.BackgroundColor3 = Color3.fromRGB(0, 140, 200)
+            btn.Text = "  ☑  " .. eggName .. "   " .. (info.income or "?")
+        else
+            S.PriorityEggs[eggName] = nil
+            btn.BackgroundColor3 = Color3.fromRGB(35, 42, 48)
+            btn.Text = "  ☐  " .. eggName .. "   " .. (info.income or "?")
+        end
+    end)
+    PriorityButtons[eggName] = {Button = btn, SetState = function(v)
+        selected = v
+        if v then
+            S.PriorityEggs[eggName] = true
+            btn.BackgroundColor3 = Color3.fromRGB(0, 140, 200)
+            btn.Text = "  ☑  " .. eggName .. "   " .. (info.income or "?")
+        else
+            S.PriorityEggs[eggName] = nil
+            btn.BackgroundColor3 = Color3.fromRGB(35, 42, 48)
+            btn.Text = "  ☐  " .. eggName .. "   " .. (info.income or "?")
+        end
+    end}
+end
+
+SelectAllBtn.MouseButton1Click:Connect(function()
+    for name, data in pairs(PriorityButtons) do data.SetState(true) end
+end)
+ClearAllBtn.MouseButton1Click:Connect(function()
+    for name, data in pairs(PriorityButtons) do data.SetState(false) end
+end)
+
+PList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    PriorityScroll.CanvasSize = UDim2.new(0, 0, 0, PList.AbsoluteContentSize.Y + 10)
+end)
+
+-- ANTI TRAP
+local TrapConnection
+local DisabledTraps={}
+local function DisableTrap(o)
+    if not o:IsA("BasePart") then return end
+    local n=o.Name:lower()
+    if n:find("trap") or n:find("bear") or n:find("bẫy")
+    or n:find("spike") or n:find("snare") or n:find("hunter") then
+        DisabledTraps[o]={CanCollide=o.CanCollide,CanTouch=o.CanTouch}
+        pcall(function() o.CanCollide=false o.CanTouch=false end)
+    end
+end
+local function StartAntiTrap()
+    S.AntiTrap=true
+    if TrapConnection then TrapConnection:Disconnect() end
+    for _,o in ipairs(Workspace:GetDescendants()) do DisableTrap(o) end
+    TrapConnection=Workspace.DescendantAdded:Connect(function(o)
+        if S.AntiTrap then DisableTrap(o) end
+    end)
+end
+local function StopAntiTrap()
+    S.AntiTrap=false
+    if TrapConnection then TrapConnection:Disconnect() TrapConnection=nil end
+    for o,v in pairs(DisabledTraps) do
+        if o.Parent then
+            pcall(function() o.CanCollide=v.CanCollide o.CanTouch=v.CanTouch end)
+        end
+    end
+    DisabledTraps={}
+end
+local AntiTrapToggle=Toggle(StealPage,T("antiTrap"),T("antiTrapDesc"),function(v)
+    if v then StartAntiTrap() else StopAntiTrap() end
+end)
+
+-- ScriptCard
+local function ScriptCard(parent,title,desc,url)
+    local r=Row(parent,90)
+    local t=Label(r,title,16,UDim2.new(0,18,0,10))
+    t.Font=Enum.Font.GothamMedium
+    local d=Label(r,desc,12,UDim2.new(0,18,0,40))
+    d.TextColor3=Color3.fromRGB(145,155,160)
+    d.Size=UDim2.new(1,-185,0,42)
+    local b=Instance.new("TextButton")
+    b.Size=UDim2.new(0,135,0,36); b.Position=UDim2.new(1,-153,.5,-18)
+    b.BackgroundColor3=Color3.fromRGB(0,150,215); b.Text="EXECUTE"
+    b.TextColor3=Color3.new(1,1,1); b.TextSize=13
+    b.Font=Enum.Font.GothamBold; b.Active=true; b.ZIndex=15; b.Parent=r
+    Corner(b,9)
+    b.MouseButton1Click:Connect(function()
+        b.Text="LOADING..."
+        task.spawn(function()
+            local ok,err=pcall(function()
+                local code=game:HttpGet(url)
+                local fn=loadstring(code)
+                if fn then fn() else error("loadstring failed") end
+            end)
+            if ok then
+                b.Text="EXECUTED"; task.wait(1); b.Text="EXECUTE"
+            else
+                b.Text="ERROR"; warn("[Tnh-VN] "..tostring(err))
+                task.wait(1.5); b.Text="EXECUTE"
+            end
+        end)
+    end)
+    return r
+end
+
+ScriptCard(StealPage,T("antichase"),"StealEggOnly",
+    "https://raw.githubusercontent.com/WhiteX1208/Scripts/refs/heads/main/StealEggOnly.luau")
+ScriptCard(StealPage,T("sena"),"Sena V3",
+    "https://raw.githubusercontent.com/senarblx/sena/refs/heads/main/senav3go")
+
+-- UPDATE PAGE
+local UpdateHeader=PageHeader(UpdatePage,T("update"),T("updateDesc"))
+local UpdateNoticeRow=Row(UpdatePage,100)
+local UpdateNoticeTitle=Label(UpdateNoticeRow,"Phiên bản: Tnh-VN MENU",16,UDim2.new(0,18,0,14))
+UpdateNoticeTitle.Font=Enum.Font.GothamMedium
+local UpdateNoticeText=Label(UpdateNoticeRow,T("updateNotice"),13,UDim2.new(0,18,0,48))
+UpdateNoticeText.TextColor3=Color3.fromRGB(0,200,255)
+UpdateNoticeText.Size=UDim2.new(1,-36,1,-60)
+UpdateNoticeText.TextWrapped=true
+
+local UpdateFeaturesRow=Row(UpdatePage,180)
+local UpdateFeaturesTitle=Label(UpdateFeaturesRow,"Tính năng đã sửa:",15,UDim2.new(0,18,0,12))
+UpdateFeaturesTitle.Font=Enum.Font.GothamMedium
+local UpdateFeaturesText=Label(UpdateFeaturesRow,
+    "• ESP Egg đọc tên thật từ BillboardGui của game\n" ..
+    "• Auto Steal: teleport → nhặt → về Base\n" ..
+    "• Bất tử khi đang cầm trứng\n" ..
+    "• Danh mục chọn trứng ưu tiên (multi-select)\n" ..
+    "• Nút Chọn tất cả / Bỏ chọn tất cả",
+    12,UDim2.new(0,18,0,42))
+UpdateFeaturesText.TextColor3=Color3.fromRGB(140,220,140)
+UpdateFeaturesText.Size=UDim2.new(1,-36,1,-60)
+UpdateFeaturesText.TextWrapped=true
+UpdateFeaturesText.TextYAlignment=Enum.TextYAlignment.Top
+
+-- LANGUAGE
+local LangHeader=PageHeader(LangPage,T("language"),T("languageDesc"))
+local LR=Row(LangPage,170)
+local LT=Label(LR,T("language"),17,UDim2.new(0,18,0,14))
+local LD=Label(LR,T("languageDesc"),12,UDim2.new(0,18,0,44))
+LD.TextColor3=Color3.fromRGB(145,155,160)
+local LL=Instance.new("Frame")
+LL.Size=UDim2.new(1,-36,0,80); LL.Position=UDim2.new(0,18,0,78)
+LL.BackgroundTransparency=1; LL.Parent=LR
+local Grid=Instance.new("UIGridLayout")
+Grid.CellSize=UDim2.new(.19,0,0,38); Grid.CellPadding=UDim2.new(.012,0,0,7)
+Grid.Parent=LL
+
+local Langs={{"VN","🇻🇳"},{"EN","🇺🇸"},{"TH","🇹🇭"},{"KR","🇰🇷"},{"CN","🇨🇳"}}
+local LangButtons={}
+
+local function Refresh()
+    Title.Text=T("title")
+    MB.Text="  ⌂   "..T("main"); FB.Text="  ✈   Fly"
+    XB.Text="  ⚡   FixLag"; SB.Text="  🥚   "..T("steal")
+    UB.Text="  🔄   "..T("update"); LB.Text="  ⚙   "..T("language")
+    MainHeader.Text=T("main")
+    ET.Title.Text=T("esp"); ET.Description.Text=T("espDesc")
+    CL.Text=T("color")
+    for i,v in ipairs(Colors) do
+        if ColorButtons[i] then ColorButtons[i].Text=T(v[1]) end
+    end
+    AHT.Title.Text=T("antiHit"); AHT.Description.Text=T("antiHitDesc")
+    ABT.Title.Text=T("antiban"); ABT.Description.Text=T("antibanDesc")
+    FT.Title.Text=T("fly"); FT.Description.Text=T("flyDesc")
+    FlySpeedTitle.Text=T("flySpeed")
+    SpeedToggle.Title.Text=T("speedToggle"); SpeedToggle.Description.Text=T("speedToggleDesc")
+    SpeedTitle.Text=T("speed")
+    XT.Title.Text=T("fixlag"); XT.Description.Text=T("fixlagDesc")
+    StealHeader.Text=T("steal"); EggListTitle.Text=T("eggLoc"); ScanBtn.Text=T("eggScan")
+    PriorityToggle.Title.Text=T("prioritySecret"); PriorityToggle.Description.Text=T("prioritySecretDesc")
+    AutoStealToggle.Title.Text=T("autoSteal"); AutoStealToggle.Description.Text=T("autoStealDesc")
+    AntiTrapToggle.Title.Text=T("antiTrap"); AntiTrapToggle.Description.Text=T("antiTrapDesc")
+    UpdateHeader.Text=T("update"); UpdateNoticeText.Text=T("updateNotice")
+    LangHeader.Text=T("language"); LT.Text=T("language"); LD.Text=T("languageDesc")
+end
+
+for _,v in ipairs(Langs) do
+    local code=v[1]
+    local b=Instance.new("TextButton")
+    b.Text=v[2].." "..code; b.TextSize=12; b.TextColor3=Color3.new(1,1,1)
+    b.BackgroundColor3=Color3.fromRGB(35,42,48); b.BorderSizePixel=0
+    b.Font=Enum.Font.GothamMedium; b.Active=true; b.ZIndex=15; b.Parent=LL
+    Corner(b,8); LangButtons[code]=b
+    b.MouseButton1Click:Connect(function()
+        S.Language=code
+        for c,x in pairs(LangButtons) do
+            x.BackgroundColor3=c==code and Color3.fromRGB(0,140,200) or Color3.fromRGB(35,42,48)
+        end
+        Refresh()
+    end)
+end
+LangButtons.VN.BackgroundColor3=Color3.fromRGB(0,140,200)
+
+-- FLOATING T BUTTON
+local TButton=Instance.new("TextButton")
+TButton.Size=UDim2.new(0,58,0,58); TButton.Position=UDim2.new(1,-78,.5,-29)
+TButton.BackgroundColor3=Color3.fromRGB(18,23,27); TButton.Text="T"
+TButton.TextSize=26; TButton.TextColor3=Color3.new(1,1,1)
+TButton.Font=Enum.Font.GothamBold; TButton.Visible=false; TButton.Active=true
+TButton.ZIndex=50; TButton.Parent=Gui
+Corner(TButton,29); Stroke(TButton,Color3.fromRGB(0,170,255),2)
+
+local TD,TS,TP
+TButton.InputBegan:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then
+        TD=true; TS=i.Position; TP=TButton.Position
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if TD and (i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseMovement) then
+        local d=i.Position-TS
+        TButton.Position=UDim2.new(TP.X.Scale,TP.X.Offset+d.X,TP.Y.Scale,TP.Y.Offset+d.Y)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.Touch or i.UserInputType==Enum.UserInputType.MouseButton1 then TD=false end
+end)
+
+Min.MouseButton1Click:Connect(function()
+    Main.Visible=false; Notice.Visible=false; TButton.Visible=true
+end)
+TButton.MouseButton1Click:Connect(function()
+    Main.Visible=true; Notice.Visible=true; TButton.Visible=false
+end)
+Close.MouseButton1Click:Connect(function()
+    StopFly(); StopSpeed(); StopAntiHit(); StopAntiban()
+    StopFix(); StopAutoSteal(); StopAntiTrap(); ClearEggESP()
+    for p in pairs(ESPObjects) do
+        if ESPObjects[p] then ESPObjects[p]:Destroy() end
+    end
+    Gui:Destroy()
+end)
+
+print("Tnh-VN MENU loaded - ESP Egg + Auto Steal + Priority")
