@@ -1,0 +1,188 @@
+-- LocalScript: CustomDebugMenu.lua
+-- Place inside StarterPlayer -> StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+
+local LocalPlayer = Players.LocalPlayer
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CustomDebugMenuUI"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Name = "CircleToggleButton"
+toggleBtn.Size = UDim2.new(0, 50, 0, 50)
+toggleBtn.Position = UDim2.new(0.85, 0, 0.5, -25)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleBtn.Text = "T"
+toggleBtn.TextSize = 24
+toggleBtn.Font = Enum.Font.SourceSansBold
+toggleBtn.Parent = screenGui
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim2.new(1, 0)
+btnCorner.Parent = toggleBtn
+
+local dragging, dragInput, dragStart, startPos
+toggleBtn.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = toggleBtn.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+toggleBtn.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		toggleBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 520, 0, 320)
+mainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 25, 22)
+mainFrame.Visible = false
+mainFrame.Parent = screenGui
+
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim2.new(0, 8)
+frameCorner.Parent = mainFrame
+
+local headerLabel = Instance.new("TextLabel")
+headerLabel.Size = UDim2.new(1, -20, 0, 35)
+headerLabel.Position = UDim2.new(0, 10, 0, 5)
+headerLabel.BackgroundTransparency = 1
+headerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+headerLabel.Text = "Tnh-VN | Dev Control Panel"
+headerLabel.Font = Enum.Font.SourceSansBold
+headerLabel.TextSize = 18
+headerLabel.TextXAlignment = Enum.TextXAlignment.Left
+headerLabel.Parent = mainFrame
+
+local sidebar = Instance.new("Frame")
+sidebar.Name = "Sidebar"
+sidebar.Size = UDim2.new(0, 130, 1, -50)
+sidebar.Position = UDim2.new(0, 10, 0, 40)
+sidebar.BackgroundColor3 = Color3.fromRGB(15, 18, 16)
+sidebar.Parent = mainFrame
+
+local sidebarCorner = Instance.new("UICorner")
+sidebarCorner.CornerRadius = UDim2.new(0, 6)
+sidebarCorner.Parent = sidebar
+
+local btnSettings = Instance.new("TextButton")
+btnSettings.Size = UDim2.new(1, -10, 0, 35)
+btnSettings.Position = UDim2.new(0, 5, 0, 10)
+btnSettings.BackgroundColor3 = Color3.fromRGB(35, 45, 38)
+btnSettings.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnSettings.Text = "Settings"
+btnSettings.Font = Enum.Font.SourceSansBold
+btnSettings.TextSize = 15
+btnSettings.Parent = sidebar
+
+local btnSettingsCorner = Instance.new("UICorner")
+btnSettingsCorner.CornerRadius = UDim2.new(0, 4)
+btnSettingsCorner.Parent = btnSettings
+
+local contentFrame = Instance.new("Frame")
+contentFrame.Name = "ContentFrame"
+contentFrame.Size = UDim2.new(1, -160, 1, -50)
+contentFrame.Position = UDim2.new(0, 150, 0, 40)
+contentFrame.BackgroundTransparency = 1
+contentFrame.Parent = mainFrame
+
+local lagCard = Instance.new("Frame")
+lagCard.Size = UDim2.new(1, 0, 0, 70)
+lagCard.Position = UDim2.new(0, 0, 0, 10)
+lagCard.BackgroundColor3 = Color3.fromRGB(28, 34, 30)
+lagCard.Parent = contentFrame
+
+local lagCardCorner = Instance.new("UICorner")
+lagCardCorner.CornerRadius = UDim2.new(0, 6)
+lagCardCorner.Parent = lagCard
+
+local lagTitle = Instance.new("TextLabel")
+lagTitle.Size = UDim2.new(0.7, 0, 0, 25)
+lagTitle.Position = UDim2.new(0, 10, 0, 10)
+lagTitle.BackgroundTransparency = 1
+lagTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+lagTitle.Text = "FixLag Optimization"
+lagTitle.Font = Enum.Font.SourceSansBold
+lagTitle.TextSize = 16
+lagTitle.TextXAlignment = Enum.TextXAlignment.Left
+lagTitle.Parent = lagCard
+
+local lagDesc = Instance.new("TextLabel")
+lagDesc.Size = UDim2.new(0.7, 0, 0, 25)
+lagDesc.Position = UDim2.new(0, 10, 0, 35)
+lagDesc.BackgroundTransparency = 1
+lagDesc.TextColor3 = Color3.fromRGB(160, 160, 160)
+lagDesc.Text = "Remove clouds & lower rendering settings"
+lagDesc.Font = Enum.Font.SourceSans
+lagDesc.TextSize = 13
+lagDesc.TextXAlignment = Enum.TextXAlignment.Left
+lagDesc.Parent = lagCard
+
+local fixLagToggle = Instance.new("TextButton")
+fixLagToggle.Size = UDim2.new(0, 60, 0, 30)
+fixLagToggle.Position = UDim2.new(1, -70, 0.5, -15)
+fixLagToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+fixLagToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+fixLagToggle.Text = "OFF"
+fixLagToggle.Font = Enum.Font.SourceSansBold
+fixLagToggle.Parent = lagCard
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim2.new(0, 15)
+toggleCorner.Parent = fixLagToggle
+
+local isLagFixed = false
+fixLagToggle.MouseButton1Click:Connect(function()
+	isLagFixed = not isLagFixed
+	if isLagFixed then
+		fixLagToggle.Text = "ON"
+		fixLagToggle.BackgroundColor3 = Color3.fromRGB(0, 162, 232)
+		
+		settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+		Lighting.GlobalShadows = false
+		for _, v in ipairs(Lighting:GetChildren()) do
+			if v:IsA("Clouds") or v:IsA("Atmosphere") or v:IsA("PostEffect") then
+				v.Enabled = false
+			end
+		end
+		for _, v in ipairs(workspace:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.CastShadow = false
+				v.Material = Enum.Material.SmoothPlastic
+			elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") then
+				v.Enabled = false
+			end
+		end
+	else
+		fixLagToggle.Text = "OFF"
+		fixLagToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	end
+end)
+
+toggleBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = not mainFrame.Visible
+end)
