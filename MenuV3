@@ -1,0 +1,1755 @@
+-- Tnh-VN MENU
+-- KeyVIP / Steal An Egg
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local LP = Players.LocalPlayer
+
+local S = {
+    ESP = false,
+    ESPColor = Color3.fromRGB(0, 170, 255),
+    AntiHit = false,
+    Antiban = false,
+    Fly = false,
+    FlySpeed = 100,
+    Speed = false,
+    SpeedValue = 100,
+    FixLag = false,
+    AutoSteal = false,
+    PrioritySecret = false,
+    AntiTrap = false,
+    Language = "VN"
+}
+
+-- ==================================================
+-- BẢNG DỮ LIỆU EGG
+-- ==================================================
+local BiomeFolders = {
+    {name = "Forest", key = "forest"},
+    {name = "Lake", key = "lake"},
+    {name = "Desert", key = "desert"},
+    {name = "Jungle", key = "jungle"},
+    {name = "Snow", key = "snow"},
+    {name = "Volcano", key = "volcano"},
+    {name = "Abyss_Ocean", key = "abyss"},
+    {name = "AbyssOcean", key = "abyss"},
+    {name = "Prehistoric", key = "prehistoric"},
+    {name = "Cosmic", key = "cosmic"},
+    {name = "Cherry_Blossom", key = "cherry"},
+    {name = "CherryBlossom", key = "cherry"},
+    {name = "Titan_Temple", key = "titan"},
+    {name = "TitanTemple", key = "titan"}
+}
+
+local EggData = {
+    ["Chicken Egg"] = { pet = "Chicken", rarity = "Common", income = "$1/s", hatch = "10s", speed = "+420", biome = "Forest" },
+    ["Dog Egg"] = { pet = "Dog", rarity = "Common", income = "$2/s", hatch = "15s", speed = "+460", biome = "Forest" },
+    ["Bird Egg"] = { pet = "Bird", rarity = "Uncommon", income = "$8/s", hatch = "25s", speed = "+500", biome = "Forest" },
+    ["Burrowing Owl Egg"] = { pet = "Burrowing Owl", rarity = "Rare", income = "$35/s", hatch = "40s", speed = "?", biome = "Forest" },
+    ["Raccoon Egg"] = { pet = "Raccoon", rarity = "Rare", income = "$45/s", hatch = "50s", speed = "+620", biome = "Forest" },
+    ["Fox Egg"] = { pet = "Fox", rarity = "Epic", income = "$180/s", hatch = "1m 30s", speed = "+720", biome = "Forest" },
+    ["Bear Egg"] = { pet = "Bear", rarity = "Epic", income = "$240/s", hatch = "2m", speed = "+820", biome = "Forest" },
+    ["Brr Brr Patapim Egg"] = { pet = "Brr Brr Patapim", rarity = "Legendary", income = "$1.8K/s", hatch = "5m", speed = "+1,000", biome = "Forest" },
+    ["Frog Egg"] = { pet = "Frog", rarity = "Common", income = "$3/s", hatch = "15s", speed = "+2,000", biome = "Lake" },
+    ["Duckling Egg"] = { pet = "Duckling", rarity = "Common", income = "$4/s", hatch = "20s", speed = "+2,200", biome = "Lake" },
+    ["Catfish Egg"] = { pet = "Catfish", rarity = "Uncommon", income = "$12/s", hatch = "30s", speed = "+2,500", biome = "Lake" },
+    ["Turtle Egg"] = { pet = "Turtle", rarity = "Rare", income = "$60/s", hatch = "50s", speed = "+2,700", biome = "Lake" },
+    ["Trulimero Trulicina Egg"] = { pet = "Trulimero Trulicina", rarity = "Epic", income = "$260/s", hatch = "1m 30s", speed = "+3,000", biome = "Lake" },
+    ["Swan Egg"] = { pet = "Swan", rarity = "Epic", income = "$320/s", hatch = "2m", speed = "+3,500", biome = "Lake" },
+    ["Axolotl Egg"] = { pet = "Axolotl", rarity = "Legendary", income = "$2.8K/s", hatch = "10m", speed = "+4,000", biome = "Lake" },
+    ["Leviathan Egg"] = { pet = "Leviathan", rarity = "Cosmic", income = "$220K/s", hatch = "?", speed = "?", biome = "Lake" },
+    ["Jerboa Egg"] = { pet = "Jerboa", rarity = "Common", income = "$6/s", hatch = "?", speed = "?", biome = "Desert" },
+    ["Fennec Egg"] = { pet = "Fennec", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Desert" },
+    ["Camel Egg"] = { pet = "Camel", rarity = "Rare", income = "$75/s", hatch = "?", speed = "?", biome = "Desert" },
+    ["Tob Tobi Tob Tob Egg"] = { pet = "Tob Tobi Tob Tob", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Desert" },
+    ["Snake Egg"] = { pet = "Snake", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Desert" },
+    ["Scorpion Egg"] = { pet = "Scorpion", rarity = "Mythic", income = "?", hatch = "?", speed = "?", biome = "Desert" },
+    ["Sand Spider Egg"] = { pet = "Sand Spider", rarity = "Mythic", income = "$16K/s", hatch = "?", speed = "?", biome = "Desert" },
+    ["Royal Sphinx Egg"] = { pet = "Royal Sphinx", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Desert" },
+    ["Toucan Egg"] = { pet = "Toucan", rarity = "Rare", income = "$110/s", hatch = "?", speed = "?", biome = "Jungle" },
+    ["Chimpanzee Egg"] = { pet = "Chimpanzee", rarity = "Rare", income = "$90/s", hatch = "?", speed = "?", biome = "Jungle" },
+    ["Crocodile Egg"] = { pet = "Crocodile", rarity = "Epic", income = "$420/s", hatch = "?", speed = "?", biome = "Jungle" },
+    ["Gorilla Egg"] = { pet = "Gorilla", rarity = "Legendary", income = "$4.8K/s", hatch = "?", speed = "?", biome = "Jungle" },
+    ["Orangutini Ananassini Egg"] = { pet = "Orangutini Ananassini", rarity = "Legendary", income = "$5.5K/s", hatch = "?", speed = "?", biome = "Jungle" },
+    ["Spider Egg"] = { pet = "Spider", rarity = "Mythic", income = "$22K/s", hatch = "?", speed = "?", biome = "Jungle" },
+    ["Tiger Egg"] = { pet = "Tiger", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Jungle" },
+    ["King Snake Egg"] = { pet = "King Snake", rarity = "Secret", income = "$3.5M/s", hatch = "?", speed = "?", biome = "Jungle" },
+    ["Penguin Egg"] = { pet = "Penguin", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Snow" },
+    ["Walrus Egg"] = { pet = "Walrus", rarity = "Epic", income = "$600/s", hatch = "?", speed = "?", biome = "Snow" },
+    ["Polar Bear Egg"] = { pet = "Polar Bear", rarity = "Legendary", income = "$7K/s", hatch = "?", speed = "?", biome = "Snow" },
+    ["Sabertooth Tiger Egg"] = { pet = "Sabertooth Tiger", rarity = "Mythic", income = "$35K/s", hatch = "?", speed = "?", biome = "Snow" },
+    ["Mammoth Egg"] = { pet = "Mammoth", rarity = "Mythic", income = "$42K/s", hatch = "?", speed = "?", biome = "Snow" },
+    ["King Mammoth Egg"] = { pet = "King Mammoth", rarity = "Cosmic", income = "$400K/s", hatch = "?", speed = "?", biome = "Snow" },
+    ["Yeti Egg"] = { pet = "Yeti", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Snow" },
+    ["Ice Dragon Egg"] = { pet = "Ice Dragon", rarity = "Eternal", income = "?", hatch = "?", speed = "?", biome = "Snow" },
+    ["Lava Gecko Egg"] = { pet = "Lava Gecko", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Lava Frog Egg"] = { pet = "Lava Frog", rarity = "Epic", income = "$850/s", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Flaming Bull Egg"] = { pet = "Flaming Bull", rarity = "Legendary", income = "$9.5K/s", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Lava Iguana Egg"] = { pet = "Lava Iguana", rarity = "Legendary", income = "$11K/s", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Chillin Chilli Egg"] = { pet = "Chillin Chilli", rarity = "Mythic", income = "$55K/s", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Cerberus Egg"] = { pet = "Cerberus", rarity = "Secret", income = "$8M/s", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Phoenix Egg"] = { pet = "Phoenix", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Lava Dragon Egg"] = { pet = "Lava Dragon", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Volcano" },
+    ["Parrotfish Egg"] = { pet = "Parrotfish", rarity = "Rare", income = "$220/s", hatch = "?", speed = "?", biome = "Abyss Ocean" },
+    ["Swordfish Egg"] = { pet = "Swordfish", rarity = "Epic", income = "$1.1K/s", hatch = "?", speed = "?", biome = "Abyss Ocean" },
+    ["Shark Egg"] = { pet = "Shark", rarity = "Legendary", income = "$15K/s", hatch = "?", speed = "?", biome = "Abyss Ocean" },
+    ["Orca Egg"] = { pet = "Orca", rarity = "Mythic", income = "$80K/s", hatch = "?", speed = "?", biome = "Abyss Ocean" },
+    ["Whale Shark Egg"] = { pet = "Whale Shark", rarity = "Cosmic", income = "$700K/s", hatch = "?", speed = "?", biome = "Abyss Ocean" },
+    ["Beluga Whale Egg"] = { pet = "Beluga Whale", rarity = "Cosmic", income = "$850K/s", hatch = "?", speed = "?", biome = "Abyss Ocean" },
+    ["Kraken Egg"] = { pet = "Kraken", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Abyss Ocean" },
+    ["Dodo Egg"] = { pet = "Dodo", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Prehistoric" },
+    ["Pterodactyl Egg"] = { pet = "Pterodactyl", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Prehistoric" },
+    ["Ankylosaurus Egg"] = { pet = "Ankylosaurus", rarity = "Mythic", income = "$120K/s", hatch = "?", speed = "?", biome = "Prehistoric" },
+    ["Triceratops Egg"] = { pet = "Triceratops", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Prehistoric" },
+    ["Bronto Egg"] = { pet = "Bronto", rarity = "Cosmic", income = "$1.5M/s", hatch = "?", speed = "?", biome = "Prehistoric" },
+    ["TRex Egg"] = { pet = "TRex", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Prehistoric" },
+    ["Cosmic Skeleton King Egg"] = { pet = "Cosmic Skeleton King", rarity = "Divine", income = "?", hatch = "?", speed = "?", biome = "Cosmic" },
+    ["Dragon Egg"] = { pet = "Dragon", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Cosmic" },
+    ["Crane Egg"] = { pet = "Crane", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Cherry Blossom" },
+    ["Nine-tailed Fox Egg"] = { pet = "Nine-tailed Fox", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Cherry Blossom" },
+    ["Gorilla King Egg"] = { pet = "Gorilla King", rarity = "?", income = "?", hatch = "?", speed = "?", biome = "Titan Temple" },
+}
+
+-- ==================================================
+-- NGÔN NGỮ
+-- ==================================================
+local Text = {
+    VN = {
+        title = "Tnh-VN MENU", main = "Menu Chính", mainDesc = "Các chức năng chính",
+        esp = "ESP", espDesc = "Định vị người chơi bằng Box", color = "Màu ESP",
+        antiHit = "Anti Hit", antiHitDesc = "Không bị người chơi khác đánh",
+        antiban = "Antiban", antibanDesc = "Giảm khả năng bị ban (không đảm bảo 100%)",
+        fly = "Fly", flyDesc = "Bật / tắt chế độ bay", flySpeed = "Tốc độ Fly",
+        speed = "Speed", speedDesc = "Tăng tốc độ chạy từ 1 đến 500",
+        speedToggle = "Bật Speed", speedToggleDesc = "Bật / tắt tốc độ chạy",
+        fixlag = "FixLag", fixlagDesc = "Tối ưu game cho máy yếu",
+        steal = "Steal An Egg", language = "Ngôn ngữ", languageDesc = "Thay đổi ngôn ngữ menu",
+        update = "Update", updateDesc = "Thông báo cập nhật",
+        updateNotice = "Sẽ thông báo update tiếp theo sau...",
+        updateVersion = "Phiên bản hiện tại",
+        antichase = "Anti Chase", sena = "Sena",
+        blue = "Xanh dương", red = "Đỏ", pink = "Hồng", green = "Xanh lá",
+        yellow = "Vàng", purple = "Tím", white = "Trắng",
+        eggLoc = "Định Vị Egg & Giá Trị", eggScan = "Quét Egg",
+        autoSteal = "Auto Steal Egg", autoStealDesc = "Tự động nhặt Egg → chạy về Base",
+        prioritySecret = "Ưu tiên Trứng Secret", prioritySecretDesc = "Ưu tiên Egg Secret nếu có",
+        antiTrap = "Anti Chống Bẫy", antiTrapDesc = "Đi qua bẫy mà không bị dính",
+        status = "Trạng thái", statusOff = "Chưa hoạt động", statusOn = "Đang hoạt động",
+        noEggFound = "Không tìm thấy Egg trong Workspace."
+    },
+    EN = {
+        title = "Tnh-VN MENU", main = "Main Menu", mainDesc = "Main utilities",
+        esp = "ESP", espDesc = "Locate players with Box", color = "ESP Color",
+        antiHit = "Anti Hit", antiHitDesc = "Prevent other players from hitting you",
+        antiban = "Antiban", antibanDesc = "Reduce ban risk (not 100% safe)",
+        fly = "Fly", flyDesc = "Toggle flying mode", flySpeed = "Fly Speed",
+        speed = "Speed", speedDesc = "Run speed from 1 to 500",
+        speedToggle = "Speed", speedToggleDesc = "Enable / disable run speed",
+        fixlag = "FixLag", fixlagDesc = "Optimize game performance",
+        steal = "Steal An Egg", language = "Language", languageDesc = "Change menu language",
+        update = "Update", updateDesc = "Update notifications",
+        updateNotice = "Next update will be notified later...",
+        updateVersion = "Current version",
+        antichase = "Anti Chase", sena = "Sena",
+        blue = "Blue", red = "Red", pink = "Pink", green = "Green",
+        yellow = "Yellow", purple = "Purple", white = "White",
+        eggLoc = "Egg Locator & Values", eggScan = "Scan Eggs",
+        autoSteal = "Auto Steal Egg", autoStealDesc = "Auto pick Egg → run back to Base",
+        prioritySecret = "Priority Secret Egg", prioritySecretDesc = "Prioritize Secret Egg if found",
+        antiTrap = "Anti Trap", antiTrapDesc = "Walk through traps without getting stuck",
+        status = "Status", statusOff = "Inactive", statusOn = "Active",
+        noEggFound = "No Egg found in Workspace."
+    },
+    TH = {
+        title = "Tnh-VN MENU", main = "เมนูหลัก", mainDesc = "ฟังก์ชันหลัก",
+        esp = "ESP", espDesc = "ระบุตำแหน่งผู้เล่นด้วยกรอบ", color = "สี ESP",
+        antiHit = "Anti Hit", antiHitDesc = "ป้องกันผู้เล่นอื่นโจมตีคุณ",
+        antiban = "Antiban", antibanDesc = "ลดความเสี่ยงถูกแบน (ไม่รับประกัน)",
+        fly = "บิน", flyDesc = "เปิด / ปิดการบิน", flySpeed = "ความเร็วบิน",
+        speed = "ความเร็ว", speedDesc = "ความเร็ววิ่ง 1 ถึง 500",
+        speedToggle = "เปิดความเร็ว", speedToggleDesc = "เปิด / ปิดความเร็ววิ่ง",
+        fixlag = "FixLag", fixlagDesc = "เพิ่มประสิทธิภาพเกม",
+        steal = "Steal An Egg", language = "ภาษา", languageDesc = "เปลี่ยนภาษาของเมนู",
+        update = "อัปเดต", updateDesc = "การแจ้งเตือนอัปเดต",
+        updateNotice = "การอัปเดตครั้งถัดไปจะแจ้งให้ทราบภายหลัง...",
+        updateVersion = "เวอร์ชันปัจจุบัน",
+        antichase = "Anti Chase", sena = "Sena",
+        blue = "ฟ้า", red = "แดง", pink = "ชมพู", green = "เขียว",
+        yellow = "เหลือง", purple = "ม่วง", white = "ขาว",
+        eggLoc = "ตำแหน่งไข่และมูลค่า", eggScan = "สแกนไข่",
+        autoSteal = "Auto Steal Egg", autoStealDesc = "เก็บไข่อัตโนมัติ → กลับฐาน",
+        prioritySecret = "ให้ความสำคัญไข่ Secret", prioritySecretDesc = "ให้ความสำคัญไข่ Secret ถ้ามี",
+        antiTrap = "Anti Trap", antiTrapDesc = "เดินผ่านกับดักโดยไม่ติด",
+        status = "สถานะ", statusOff = "ไม่ทำงาน", statusOn = "ทำงานอยู่",
+        noEggFound = "ไม่พบไข่ใน Workspace"
+    },
+    KR = {
+        title = "Tnh-VN MENU", main = "메인 메뉴", mainDesc = "주요 기능",
+        esp = "ESP", espDesc = "박스로 플레이어 위치 표시", color = "ESP 색상",
+        antiHit = "Anti Hit", antiHitDesc = "다른 플레이어의 공격 방지",
+        antiban = "Antiban", antibanDesc = "밴 위험 감소 (100% 보장 안됨)",
+        fly = "비행", flyDesc = "비행 켜기 / 끄기", flySpeed = "비행 속도",
+        speed = "속도", speedDesc = "이동 속도 1~500",
+        speedToggle = "속도", speedToggleDesc = "이동 속도 켜기 / 끄기",
+        fixlag = "FixLag", fixlagDesc = "저사양 기기 최적화",
+        steal = "Steal An Egg", language = "언어", languageDesc = "메뉴 언어 변경",
+        update = "업데이트", updateDesc = "업데이트 알림",
+        updateNotice = "다음 업데이트는 나중에 알려드리겠습니다...",
+        updateVersion = "현재 버전",
+        antichase = "Anti Chase", sena = "Sena",
+        blue = "파랑", red = "빨강", pink = "분홍", green = "초록",
+        yellow = "노랑", purple = "보라", white = "흰색",
+        eggLoc = "알 위치 및 가치", eggScan = "알 스캔",
+        autoSteal = "Auto Steal Egg", autoStealDesc = "알 자동 획득 → 기지로 복귀",
+        prioritySecret = "Secret 알 우선", prioritySecretDesc = "Secret 알이 있으면 우선 선택",
+        antiTrap = "Anti Trap", antiTrapDesc = "함정에 걸리지 않고 통과",
+        status = "상태", statusOff = "비활성", statusOn = "활성",
+        noEggFound = "Workspace에서 알을 찾을 수 없습니다"
+    },
+    CN = {
+        title = "Tnh-VN MENU", main = "主菜单", mainDesc = "主要功能",
+        esp = "ESP", espDesc = "使用方框定位玩家", color = "ESP颜色",
+        antiHit = "Anti Hit", antiHitDesc = "防止其他玩家攻击你",
+        antiban = "Antiban", antibanDesc = "降低封号风险（不保证100%）",
+        fly = "飞行", flyDesc = "开启 / 关闭飞行", flySpeed = "飞行速度",
+        speed = "速度", speedDesc = "移动速度 1 到 500",
+        speedToggle = "速度", speedToggleDesc = "开启 / 关闭移动速度",
+        fixlag = "FixLag", fixlagDesc = "优化低端设备性能",
+        steal = "Steal An Egg", language = "语言", languageDesc = "更改语言",
+        update = "更新", updateDesc = "更新通知",
+        updateNotice = "下次更新稍后通知...",
+        updateVersion = "当前版本",
+        antichase = "Anti Chase", sena = "Sena",
+        blue = "蓝色", red = "红色", pink = "粉色", green = "绿色",
+        yellow = "黄色", purple = "紫色", white = "白色",
+        eggLoc = "蛋位置与价值", eggScan = "扫描蛋",
+        autoSteal = "Auto Steal Egg", autoStealDesc = "自动拾取蛋 → 返回基地",
+        prioritySecret = "优先 Secret 蛋", prioritySecretDesc = "如有 Secret 蛋则优先",
+        antiTrap = "Anti Trap", antiTrapDesc = "穿过陷阱不被困",
+        status = "状态", statusOff = "未激活", statusOn = "激活中",
+        noEggFound = "在 Workspace 中未找到蛋"
+    }
+}
+
+local function T(k)
+    return Text[S.Language][k]
+end
+
+-- ==================================================
+-- GUI CƠ BẢN
+-- ==================================================
+local Gui = Instance.new("ScreenGui")
+Gui.Name = "TnhVN_MENU"
+Gui.ResetOnSpawn = false
+Gui.IgnoreGuiInset = true
+Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+pcall(function() Gui.Parent = gethui() end)
+if not Gui.Parent then Gui.Parent = LP:WaitForChild("PlayerGui") end
+
+local function Corner(o, r)
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, r)
+    c.Parent = o
+end
+
+local function Stroke(o, c, t)
+    local s = Instance.new("UIStroke")
+    s.Color = c
+    s.Thickness = t or 1
+    s.Transparency = .35
+    s.Parent = o
+end
+
+local function Label(p, txt, size, pos)
+    local l = Instance.new("TextLabel")
+    l.BackgroundTransparency = 1
+    l.Text = txt
+    l.TextColor3 = Color3.fromRGB(240, 240, 240)
+    l.TextSize = size
+    l.Font = Enum.Font.Gotham
+    l.TextXAlignment = Enum.TextXAlignment.Left
+    l.Position = pos
+    l.ZIndex = 10
+    l.Parent = p
+    return l
+end
+
+-- TOP TITLE
+local Notice = Label(Gui, "Tnh-VN MENU", 13, UDim2.new(.5, -120, 0, 5))
+Notice.Size = UDim2.new(0, 240, 0, 25)
+Notice.TextXAlignment = Enum.TextXAlignment.Center
+Notice.TextColor3 = Color3.fromRGB(190, 200, 205)
+
+-- MAIN
+local Main = Instance.new("Frame")
+Main.Name = "Main"
+Main.Size = UDim2.new(0, 700, 0, 470)
+Main.Position = UDim2.new(.5, -350, .5, -235)
+Main.BackgroundColor3 = Color3.fromRGB(17, 22, 25)
+Main.BorderSizePixel = 0
+Main.Active = true
+Main.ZIndex = 1
+Main.Parent = Gui
+Corner(Main, 16)
+Stroke(Main, Color3.fromRGB(75, 85, 90), 1)
+
+-- TOP BAR
+local Top = Instance.new("Frame")
+Top.Size = UDim2.new(1, 0, 0, 65)
+Top.BackgroundColor3 = Color3.fromRGB(20, 26, 29)
+Top.BorderSizePixel = 0
+Top.Active = true
+Top.ZIndex = 3
+Top.Parent = Main
+Corner(Top, 16)
+
+local Title = Label(Top, T("title"), 21, UDim2.new(0, 22, 0, 9))
+Title.Size = UDim2.new(1, -150, 0, 28)
+Title.Font = Enum.Font.GothamMedium
+
+local Subtitle = Label(Top, "KeyVIP", 12, UDim2.new(0, 23, 0, 38))
+Subtitle.TextColor3 = Color3.fromRGB(135, 145, 150)
+
+local Min = Instance.new("TextButton")
+Min.Size = UDim2.new(0, 42, 0, 42)
+Min.Position = UDim2.new(1, -92, 0, 11)
+Min.BackgroundTransparency = 1
+Min.Text = "−"
+Min.TextSize = 30
+Min.TextColor3 = Color3.fromRGB(235, 235, 235)
+Min.Font = Enum.Font.Gotham
+Min.Active = true
+Min.ZIndex = 20
+Min.Parent = Top
+
+local Close = Instance.new("TextButton")
+Close.Size = UDim2.new(0, 42, 0, 42)
+Close.Position = UDim2.new(1, -48, 0, 11)
+Close.BackgroundTransparency = 1
+Close.Text = "×"
+Close.TextSize = 30
+Close.TextColor3 = Color3.fromRGB(235, 235, 235)
+Close.Font = Enum.Font.Gotham
+Close.Active = true
+Close.ZIndex = 20
+Close.Parent = Top
+
+-- DRAG MAIN
+local drag, ds, sp
+Top.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        drag = true ds = i.Position sp = Main.Position
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if drag and (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        local d = i.Position - ds
+        Main.Position = UDim2.new(sp.X.Scale, sp.X.Offset + d.X, sp.Y.Scale, sp.Y.Offset + d.Y)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end
+end)
+
+-- SIDEBAR
+local Sidebar = Instance.new("Frame")
+Sidebar.Name = "Sidebar"
+Sidebar.Size = UDim2.new(0, 170, 1, -82)
+Sidebar.Position = UDim2.new(0, 10, 0, 72)
+Sidebar.BackgroundColor3 = Color3.fromRGB(21, 27, 30)
+Sidebar.BorderSizePixel = 0
+Sidebar.Active = true
+Sidebar.ZIndex = 20
+Sidebar.Parent = Main
+Corner(Sidebar, 12)
+
+local SideList = Instance.new("Frame")
+SideList.Size = UDim2.new(1, -14, 1, -14)
+SideList.Position = UDim2.new(0, 7, 0, 7)
+SideList.BackgroundTransparency = 1
+SideList.Active = true
+SideList.ZIndex = 21
+SideList.Parent = Sidebar
+
+local SideLayout = Instance.new("UIListLayout")
+SideLayout.Padding = UDim.new(0, 6)
+SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+SideLayout.SortOrder = Enum.SortOrder.LayoutOrder
+SideLayout.Parent = SideList
+
+local Pages = {}
+local Buttons = {}
+
+local function Page(name)
+    local p = Instance.new("ScrollingFrame")
+    p.Name = name .. "Page"
+    p.Size = UDim2.new(1, -195, 1, -85)
+    p.Position = UDim2.new(0, 185, 0, 75)
+    p.BackgroundTransparency = 1
+    p.BorderSizePixel = 0
+    p.ScrollBarThickness = 4
+    p.ScrollBarImageColor3 = Color3.fromRGB(0, 170, 235)
+    p.Visible = false
+    p.Active = true
+    p.ZIndex = 5
+    p.Parent = Main
+
+    local l = Instance.new("UIListLayout")
+    l.Padding = UDim.new(0, 12)
+    l.Parent = p
+    l:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        p.CanvasSize = UDim2.new(0, 0, 0, l.AbsoluteContentSize.Y + 20)
+    end)
+    Pages[name] = p
+    return p
+end
+
+local MainPage = Page("Main")
+local FlyPage = Page("Fly")
+local FixPage = Page("FixLag")
+local StealPage = Page("StealAnEgg")
+local UpdatePage = Page("Update")
+local LangPage = Page("Language")
+
+local function SideButton(name, text, icon)
+    local b = Instance.new("TextButton")
+    b.Name = name
+    b.Size = UDim2.new(1, -10, 0, 44)
+    b.BackgroundColor3 = Color3.fromRGB(29, 36, 40)
+    b.BorderSizePixel = 0
+    b.Text = "  " .. icon .. "   " .. text
+    b.TextColor3 = Color3.fromRGB(225, 230, 232)
+    b.TextSize = 13
+    b.Font = Enum.Font.GothamMedium
+    b.TextXAlignment = Enum.TextXAlignment.Left
+    b.AutoButtonColor = true
+    b.Active = true
+    b.Selectable = true
+    b.ZIndex = 25
+    b.Parent = SideList
+    Corner(b, 10)
+    Buttons[name] = b
+    return b
+end
+
+local MB = SideButton("Main", T("main"), "⌂")
+local FB = SideButton("Fly", "Fly", "✈")
+local XB = SideButton("FixLag", "FixLag", "⚡")
+local SB = SideButton("StealAnEgg", T("steal"), "🥚")
+local UB = SideButton("Update", T("update"), "🔄")
+local LB = SideButton("Language", T("language"), "⚙")
+
+function OpenPage(name)
+    for n, p in pairs(Pages) do p.Visible = (n == name) end
+    for n, b in pairs(Buttons) do
+        b.BackgroundColor3 = n == name and Color3.fromRGB(0, 150, 215) or Color3.fromRGB(29, 36, 40)
+    end
+end
+
+MB.MouseButton1Click:Connect(function() OpenPage("Main") end)
+FB.MouseButton1Click:Connect(function() OpenPage("Fly") end)
+XB.MouseButton1Click:Connect(function() OpenPage("FixLag") end)
+SB.MouseButton1Click:Connect(function() OpenPage("StealAnEgg") end)
+UB.MouseButton1Click:Connect(function() OpenPage("Update") end)
+LB.MouseButton1Click:Connect(function() OpenPage("Language") end)
+
+-- ==================================================
+-- KEY SYSTEM
+-- ==================================================
+local CorrectKey = "Tnh-VN"
+local KeyVerified = false
+
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Size = UDim2.new(0, 380, 0, 250)
+KeyFrame.Position = UDim2.new(.5, -190, .5, -125)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(17, 22, 25)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Active = true
+KeyFrame.ZIndex = 100
+KeyFrame.Parent = Gui
+Corner(KeyFrame, 16)
+Stroke(KeyFrame, Color3.fromRGB(75, 85, 90), 1)
+
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Size = UDim2.new(1, -30, 0, 35)
+KeyTitle.Position = UDim2.new(0, 15, 0, 22)
+KeyTitle.Text = "Tnh-VN MENU"
+KeyTitle.TextColor3 = Color3.fromRGB(240, 240, 240)
+KeyTitle.TextSize = 24
+KeyTitle.Font = Enum.Font.GothamMedium
+KeyTitle.TextXAlignment = Enum.TextXAlignment.Center
+KeyTitle.ZIndex = 101
+KeyTitle.Parent = KeyFrame
+
+local KeySub = Instance.new("TextLabel")
+KeySub.BackgroundTransparency = 1
+KeySub.Size = UDim2.new(1, -30, 0, 25)
+KeySub.Position = UDim2.new(0, 15, 0, 60)
+KeySub.Text = "Nhập Key để tiếp tục"
+KeySub.TextColor3 = Color3.fromRGB(145, 155, 160)
+KeySub.TextSize = 13
+KeySub.Font = Enum.Font.Gotham
+KeySub.TextXAlignment = Enum.TextXAlignment.Center
+KeySub.ZIndex = 101
+KeySub.Parent = KeyFrame
+
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(1, -50, 0, 45)
+KeyBox.Position = UDim2.new(0, 25, 0, 100)
+KeyBox.BackgroundColor3 = Color3.fromRGB(27, 34, 38)
+KeyBox.BorderSizePixel = 0
+KeyBox.Text = ""
+KeyBox.PlaceholderText = "Dán Key vào đây..."
+KeyBox.PlaceholderColor3 = Color3.fromRGB(110, 120, 125)
+KeyBox.TextColor3 = Color3.fromRGB(240, 240, 240)
+KeyBox.TextSize = 15
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.ClearTextOnFocus = false
+KeyBox.TextXAlignment = Enum.TextXAlignment.Center
+KeyBox.ZIndex = 101
+KeyBox.Parent = KeyFrame
+Corner(KeyBox, 10)
+Stroke(KeyBox, Color3.fromRGB(55, 65, 70), 1)
+
+local ConfirmKey = Instance.new("TextButton")
+ConfirmKey.Size = UDim2.new(1, -50, 0, 42)
+ConfirmKey.Position = UDim2.new(0, 25, 0, 158)
+ConfirmKey.BackgroundColor3 = Color3.fromRGB(0, 170, 90)
+ConfirmKey.BorderSizePixel = 0
+ConfirmKey.Text = "Xác Nhận"
+ConfirmKey.TextColor3 = Color3.new(1, 1, 1)
+ConfirmKey.TextSize = 14
+ConfirmKey.Font = Enum.Font.GothamBold
+ConfirmKey.Active = true
+ConfirmKey.ZIndex = 101
+ConfirmKey.Parent = KeyFrame
+Corner(ConfirmKey, 10)
+
+local KeyStatus = Instance.new("TextLabel")
+KeyStatus.BackgroundTransparency = 1
+KeyStatus.Size = UDim2.new(1, -30, 0, 25)
+KeyStatus.Position = UDim2.new(0, 15, 0, 208)
+KeyStatus.Text = ""
+KeyStatus.TextColor3 = Color3.fromRGB(255, 80, 80)
+KeyStatus.TextSize = 12
+KeyStatus.Font = Enum.Font.Gotham
+KeyStatus.TextXAlignment = Enum.TextXAlignment.Center
+KeyStatus.ZIndex = 101
+KeyStatus.Parent = KeyFrame
+
+local function VerifyKey()
+    if KeyBox.Text == CorrectKey then
+        KeyVerified = true
+        KeyStatus.Text = "Key chính xác!"
+        KeyStatus.TextColor3 = Color3.fromRGB(0, 220, 120)
+
+        task.wait(.35)
+
+        KeyFrame.Visible = false
+        Main.Visible = true
+        Notice.Visible = true
+
+        OpenPage("Main")
+    else
+        KeyStatus.Text = "Key không đúng!"
+        KeyStatus.TextColor3 = Color3.fromRGB(255, 75, 75)
+        KeyBox.Text = ""
+        KeyBox:CaptureFocus()
+    end
+end
+
+ConfirmKey.MouseButton1Click:Connect(VerifyKey)
+
+KeyBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        VerifyKey()
+    end
+end)
+
+-- Ẩn menu cho đến khi nhập đúng key
+Main.Visible = false
+Notice.Visible = false
+KeyFrame.Visible = true
+
+-- ==================================================
+-- HELPERS
+-- ==================================================
+local function PageHeader(parent, title, desc)
+    local h = Label(parent, title, 29, UDim2.new(0, 5, 0, 0))
+    h.Size = UDim2.new(1, -10, 0, 42)
+    h.Font = Enum.Font.GothamMedium
+
+    local d = Label(parent, desc, 13, UDim2.new(0, 7, 0, 43))
+    d.Size = UDim2.new(1, -15, 0, 30)
+    d.TextColor3 = Color3.fromRGB(145, 155, 160)
+
+    local space = Instance.new("Frame")
+    space.Size = UDim2.new(1, 0, 0, 76)
+    space.BackgroundTransparency = 1
+    space.Parent = parent
+    return h, d
+end
+
+local function Row(parent, h)
+    local r = Instance.new("Frame")
+    r.Size = UDim2.new(1, -8, 0, h)
+    r.BackgroundColor3 = Color3.fromRGB(25, 31, 34)
+    r.BorderSizePixel = 0
+    r.ZIndex = 6
+    r.Parent = parent
+    Corner(r, 11)
+    Stroke(r, Color3.fromRGB(55, 65, 70), 1)
+    return r
+end
+
+local function Toggle(parent, title, desc, callback)
+    local r = Row(parent, 78)
+    local tl = Label(r, title, 16, UDim2.new(0, 18, 0, 8))
+    local dl = Label(r, desc, 12, UDim2.new(0, 18, 0, 40))
+    tl.Size = UDim2.new(1, -125, 0, 25)
+    dl.Size = UDim2.new(1, -125, 0, 27)
+    dl.TextColor3 = Color3.fromRGB(150, 160, 165)
+
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 70, 0, 34)
+    b.Position = UDim2.new(1, -88, .5, -17)
+    b.Text = ""
+    b.BackgroundColor3 = Color3.fromRGB(65, 72, 78)
+    b.Active = true
+    b.ZIndex = 15
+    b.Parent = r
+    Corner(b, 17)
+
+    local k = Instance.new("Frame")
+    k.Size = UDim2.new(0, 26, 0, 26)
+    k.Position = UDim2.new(0, 4, .5, -13)
+    k.BackgroundColor3 = Color3.fromRGB(220, 225, 228)
+    k.ZIndex = 16
+    k.Parent = b
+    Corner(k, 13)
+
+    local on = false
+    local function Render()
+        if on then
+            b.BackgroundColor3 = Color3.fromRGB(0, 170, 235)
+            k.BackgroundColor3 = Color3.fromRGB(18, 25, 29)
+            k.Position = UDim2.new(1, -30, .5, -13)
+        else
+            b.BackgroundColor3 = Color3.fromRGB(65, 72, 78)
+            k.BackgroundColor3 = Color3.fromRGB(220, 225, 228)
+            k.Position = UDim2.new(0, 4, .5, -13)
+        end
+    end
+    b.MouseButton1Click:Connect(function()
+        on = not on
+        Render()
+        callback(on)
+    end)
+    Render()
+    return { Row = r, Title = tl, Description = dl }
+end
+
+-- ==================================================
+-- MENU CHÍNH
+-- ==================================================
+local MainHeader = PageHeader(MainPage, T("main"), T("mainDesc"))
+
+-- ESP
+local ESPObjects = {}
+local function AddESP(p)
+    if p == LP or ESPObjects[p] or not p.Character then return end
+    local h = Instance.new("Highlight")
+    h.Name = "TnhVN_ESP"
+    h.Adornee = p.Character
+    h.FillColor = S.ESPColor
+    h.OutlineColor = S.ESPColor
+    h.FillTransparency = .78
+    h.OutlineTransparency = 0
+    h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    h.Parent = p.Character
+    ESPObjects[p] = h
+end
+
+local function UpdateESP()
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LP then
+            if S.ESP then
+                AddESP(p)
+                if ESPObjects[p] then
+                    ESPObjects[p].Enabled = true
+                    ESPObjects[p].FillColor = S.ESPColor
+                    ESPObjects[p].OutlineColor = S.ESPColor
+                end
+            elseif ESPObjects[p] then
+                ESPObjects[p].Enabled = false
+            end
+        end
+    end
+end
+
+Players.PlayerAdded:Connect(function(p)
+    p.CharacterAdded:Connect(function()
+        task.wait(.5)
+        if S.ESP then AddESP(p) end
+    end)
+end)
+Players.PlayerRemoving:Connect(function(p)
+    if ESPObjects[p] then ESPObjects[p]:Destroy() ESPObjects[p] = nil end
+end)
+
+local ET = Toggle(MainPage, T("esp"), T("espDesc"), function(v)
+    S.ESP = v
+    UpdateESP()
+end)
+
+-- ESP COLOR
+local ColorRow = Row(MainPage, 58)
+local CL = Label(ColorRow, T("color"), 15, UDim2.new(0, 18, 0, 16))
+
+local ColorOpen = Instance.new("TextButton")
+ColorOpen.Size = UDim2.new(0, 145, 0, 34)
+ColorOpen.Position = UDim2.new(1, -165, .5, -17)
+ColorOpen.Text = T("blue")
+ColorOpen.TextColor3 = Color3.new(1, 1, 1)
+ColorOpen.TextSize = 12
+ColorOpen.Font = Enum.Font.GothamMedium
+ColorOpen.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+ColorOpen.Active = true
+ColorOpen.ZIndex = 15
+ColorOpen.Parent = ColorRow
+Corner(ColorOpen, 9)
+
+local ColorList = Instance.new("Frame")
+ColorList.Size = UDim2.new(1, -8, 0, 132)
+ColorList.BackgroundColor3 = Color3.fromRGB(25, 31, 34)
+ColorList.BorderSizePixel = 0
+ColorList.Visible = false
+ColorList.ZIndex = 30
+ColorList.Parent = MainPage
+Corner(ColorList, 11)
+Stroke(ColorList, Color3.fromRGB(55, 65, 70), 1)
+
+local ColorGrid = Instance.new("UIGridLayout")
+ColorGrid.CellSize = UDim2.new(0, 125, 0, 42)
+ColorGrid.CellPadding = UDim2.new(0, 8, 0, 8)
+ColorGrid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+ColorGrid.VerticalAlignment = Enum.VerticalAlignment.Center
+ColorGrid.Parent = ColorList
+
+local Colors = {
+    {"blue", Color3.fromRGB(0, 170, 255)},
+    {"red", Color3.fromRGB(255, 55, 55)},
+    {"pink", Color3.fromRGB(255, 80, 180)},
+    {"green", Color3.fromRGB(50, 220, 100)},
+    {"yellow", Color3.fromRGB(255, 220, 40)},
+    {"purple", Color3.fromRGB(180, 80, 255)},
+    {"white", Color3.fromRGB(245, 245, 245)}
+}
+
+local ColorButtons = {}
+local function SetESPColor(index)
+    S.ESPColor = Colors[index][2]
+    ColorOpen.Text = T(Colors[index][1])
+    ColorOpen.BackgroundColor3 = Colors[index][2]
+    UpdateESP()
+end
+
+for i, v in ipairs(Colors) do
+    local b = Instance.new("TextButton")
+    b.Text = T(v[1])
+    b.TextColor3 = Color3.new(1, 1, 1)
+    b.TextSize = 12
+    b.Font = Enum.Font.GothamMedium
+    b.BackgroundColor3 = v[2]
+    b.BorderSizePixel = 0
+    b.Active = true
+    b.ZIndex = 31
+    b.Parent = ColorList
+    Corner(b, 8)
+    ColorButtons[i] = b
+    b.MouseButton1Click:Connect(function()
+        SetESPColor(i)
+        ColorList.Visible = false
+    end)
+end
+
+ColorOpen.MouseButton1Click:Connect(function()
+    ColorList.Visible = not ColorList.Visible
+end)
+
+-- ==================================================
+-- ANTI HIT
+-- ==================================================
+local AntiHitConnection, AntiHitForce, AntiHitLoop
+
+local function ApplyAntiHit()
+    local c = LP.Character
+    local h = c and c:FindFirstChildOfClass("Humanoid")
+    if not c or not h then return end
+
+    if AntiHitForce and AntiHitForce.Parent ~= c then AntiHitForce = nil end
+    if not AntiHitForce then
+        AntiHitForce = Instance.new("ForceField")
+        AntiHitForce.Name = "TnhVN_AntiHit"
+        AntiHitForce.Visible = false
+        AntiHitForce.Parent = c
+    end
+
+    if AntiHitLoop then AntiHitLoop:Disconnect() end
+    AntiHitLoop = RunService.Heartbeat:Connect(function()
+        if not S.AntiHit then return end
+        local hum = LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
+        if hum and hum.Health < hum.MaxHealth then
+            hum.Health = hum.MaxHealth
+        end
+    end)
+end
+
+local function StopAntiHit()
+    if AntiHitConnection then AntiHitConnection:Disconnect() AntiHitConnection = nil end
+    if AntiHitLoop then AntiHitLoop:Disconnect() AntiHitLoop = nil end
+    if AntiHitForce then AntiHitForce:Destroy() AntiHitForce = nil end
+end
+
+local function StartAntiHit()
+    StopAntiHit()
+    S.AntiHit = true
+    ApplyAntiHit()
+    AntiHitConnection = LP.CharacterAdded:Connect(function()
+        task.wait(.5)
+        if S.AntiHit then ApplyAntiHit() end
+    end)
+end
+
+local AHT = Toggle(MainPage, T("antiHit"), T("antiHitDesc"), function(v)
+    if v then StartAntiHit() else S.AntiHit = false StopAntiHit() end
+end)
+
+-- ==================================================
+-- ANTIBAN
+-- ==================================================
+local AntibanLoop
+
+local function StartAntiban()
+    S.Antiban = true
+    if AntibanLoop then AntibanLoop:Disconnect() end
+    AntibanLoop = RunService.Heartbeat:Connect(function()
+        if not S.Antiban then return end
+        local hum = LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            if not S.Speed and hum.WalkSpeed > 25 then hum.WalkSpeed = 16 end
+            if hum.JumpPower and hum.JumpPower > 100 then hum.JumpPower = 50 end
+        end
+        if S.Fly and S.FlySpeed > 200 then
+            S.FlySpeed = 200
+            if FlySpeedValue then
+                FlySpeedValue.Text = "200"
+                FlyFill.Size = UDim2.new(200 / 500, 0, 1, 0)
+                FlyKnob.Position = UDim2.new(200 / 500, 0, .5, 0)
+            end
+        end
+        if S.Speed and S.SpeedValue > 200 then
+            S.SpeedValue = 200
+            if SpeedValue then
+                SpeedValue.Text = "200"
+                SpeedFill.Size = UDim2.new(200 / 500, 0, 1, 0)
+                SpeedKnob.Position = UDim2.new(200 / 500, 0, .5, 0)
+            end
+        end
+    end)
+end
+
+local function StopAntiban()
+    S.Antiban = false
+    if AntibanLoop then AntibanLoop:Disconnect() AntibanLoop = nil end
+end
+
+local ABT = Toggle(MainPage, T("antiban"), T("antibanDesc"), function(v)
+    if v then StartAntiban() else StopAntiban() end
+end)
+
+-- ==================================================
+-- FLY
+-- ==================================================
+local FlyHeader = PageHeader(FlyPage, "Fly", "Movement utilities")
+local FlyConnection
+
+local function StopFly()
+    S.Fly = false
+    if FlyConnection then FlyConnection:Disconnect() FlyConnection = nil end
+    local c = LP.Character
+    local r = c and c:FindFirstChild("HumanoidRootPart")
+    local h = c and c:FindFirstChildOfClass("Humanoid")
+    if r then
+        local bv = r:FindFirstChild("TnhVN_FlyVelocity")
+        local bg = r:FindFirstChild("TnhVN_FlyGyro")
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
+    end
+    if h then
+        h.PlatformStand = false
+        h:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end
+
+local function StartFly()
+    StopFly()
+    local c = LP.Character
+    local r = c and c:FindFirstChild("HumanoidRootPart")
+    local h = c and c:FindFirstChildOfClass("Humanoid")
+    if not r or not h then return end
+    S.Fly = true
+
+    local bv = Instance.new("BodyVelocity")
+    bv.Name = "TnhVN_FlyVelocity"
+    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bv.P = 25000
+    bv.Velocity = Vector3.zero
+    bv.Parent = r
+
+    local bg = Instance.new("BodyGyro")
+    bg.Name = "TnhVN_FlyGyro"
+    bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    bg.P = 30000
+    bg.D = 1000
+    bg.CFrame = r.CFrame
+    bg.Parent = r
+
+    h.PlatformStand = true
+
+    FlyConnection = RunService.RenderStepped:Connect(function()
+        if not S.Fly or not r.Parent or not h.Parent then StopFly() return end
+        local cam = Workspace.CurrentCamera
+        if not cam then return end
+        local md = h.MoveDirection
+        local look = cam.CFrame.LookVector
+        local move = Vector3.zero
+        if md.Magnitude > 0 then
+            local horizontal = Vector3.new(md.X, 0, md.Z)
+            if horizontal.Magnitude > 0 then horizontal = horizontal.Unit end
+            local vertical = look.Y
+            move = Vector3.new(horizontal.X, vertical, horizontal.Z)
+            if move.Magnitude > 0 then move = move.Unit end
+        end
+        bv.Velocity = move * S.FlySpeed
+        bg.CFrame = CFrame.lookAt(r.Position, r.Position + look)
+    end)
+end
+
+local FT = Toggle(FlyPage, T("fly"), T("flyDesc"), function(v)
+    if v then StartFly() else StopFly() end
+end)
+
+-- FLY SPEED
+local FlySpeedRow = Row(FlyPage, 95)
+local FlySpeedTitle = Label(FlySpeedRow, T("flySpeed"), 15, UDim2.new(0, 18, 0, 11))
+local FlySpeedValue = Label(FlySpeedRow, tostring(S.FlySpeed), 13, UDim2.new(1, -80, 0, 11))
+FlySpeedValue.Size = UDim2.new(0, 60, 0, 22)
+FlySpeedValue.TextXAlignment = Enum.TextXAlignment.Right
+FlySpeedValue.TextColor3 = Color3.fromRGB(0, 190, 255)
+
+local FlyBar = Instance.new("Frame")
+FlyBar.Size = UDim2.new(1, -36, 0, 8)
+FlyBar.Position = UDim2.new(0, 18, 1, -25)
+FlyBar.BackgroundColor3 = Color3.fromRGB(55, 65, 72)
+FlyBar.Active = true
+FlyBar.ZIndex = 12
+FlyBar.Parent = FlySpeedRow
+Corner(FlyBar, 4)
+
+local FlyFill = Instance.new("Frame")
+FlyFill.Size = UDim2.new(S.FlySpeed / 500, 0, 1, 0)
+FlyFill.BackgroundColor3 = Color3.fromRGB(0, 170, 235)
+FlyFill.ZIndex = 13
+FlyFill.Parent = FlyBar
+Corner(FlyFill, 4)
+
+local FlyKnob = Instance.new("Frame")
+FlyKnob.Size = UDim2.new(0, 17, 0, 17)
+FlyKnob.AnchorPoint = Vector2.new(.5, .5)
+FlyKnob.Position = UDim2.new(S.FlySpeed / 500, 0, .5, 0)
+FlyKnob.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+FlyKnob.ZIndex = 14
+FlyKnob.Parent = FlyBar
+Corner(FlyKnob, 9)
+
+local FlyDragging = false
+local function SetFlySpeed(x)
+    local p = math.clamp((x - FlyBar.AbsolutePosition.X) / FlyBar.AbsoluteSize.X, 0, 1)
+    S.FlySpeed = math.clamp(math.floor(p * 499) + 1, 1, 500)
+    FlySpeedValue.Text = tostring(S.FlySpeed)
+    FlyFill.Size = UDim2.new(S.FlySpeed / 500, 0, 1, 0)
+    FlyKnob.Position = UDim2.new(S.FlySpeed / 500, 0, .5, 0)
+end
+
+FlyBar.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        FlyDragging = true SetFlySpeed(i.Position.X)
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if FlyDragging and (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        SetFlySpeed(i.Position.X)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        FlyDragging = false
+    end
+end)
+
+-- ==================================================
+-- SPEED
+-- ==================================================
+local SpeedHeader = PageHeader(FlyPage, "Speed", "Run speed utilities")
+local SpeedConnection
+local SavedWalkSpeed = nil
+
+local function GetHumanoid()
+    local c = LP.Character
+    return c and c:FindFirstChildOfClass("Humanoid")
+end
+
+local function StartSpeed()
+    if SpeedConnection then SpeedConnection:Disconnect() SpeedConnection = nil end
+    local h = GetHumanoid()
+    if h then SavedWalkSpeed = h.WalkSpeed end
+    S.Speed = true
+    SpeedConnection = RunService.Heartbeat:Connect(function()
+        if not S.Speed then return end
+        local humanoid = GetHumanoid()
+        if humanoid then humanoid.WalkSpeed = S.SpeedValue end
+    end)
+end
+
+local function StopSpeed()
+    S.Speed = false
+    if SpeedConnection then SpeedConnection:Disconnect() SpeedConnection = nil end
+    local h = GetHumanoid()
+    if h then h.WalkSpeed = SavedWalkSpeed or 16 end
+    SavedWalkSpeed = nil
+end
+
+LP.CharacterAdded:Connect(function()
+    task.wait(.5)
+    if S.Speed then
+        local h = GetHumanoid()
+        if h then h.WalkSpeed = S.SpeedValue end
+    end
+    if S.Fly then StartFly() end
+    if S.AntiHit then ApplyAntiHit() end
+end)
+
+local SpeedToggle = Toggle(FlyPage, T("speedToggle"), T("speedToggleDesc"), function(v)
+    if v then StartSpeed() else StopSpeed() end
+end)
+
+-- SPEED SLIDER
+local SpeedRow = Row(FlyPage, 95)
+local SpeedTitle = Label(SpeedRow, T("speed"), 15, UDim2.new(0, 18, 0, 11))
+local SpeedValue = Label(SpeedRow, tostring(S.SpeedValue), 13, UDim2.new(1, -80, 0, 11))
+SpeedValue.Size = UDim2.new(0, 60, 0, 22)
+SpeedValue.TextXAlignment = Enum.TextXAlignment.Right
+SpeedValue.TextColor3 = Color3.fromRGB(0, 190, 255)
+
+local SpeedBar = Instance.new("Frame")
+SpeedBar.Size = UDim2.new(1, -36, 0, 8)
+SpeedBar.Position = UDim2.new(0, 18, 1, -25)
+SpeedBar.BackgroundColor3 = Color3.fromRGB(55, 65, 72)
+SpeedBar.Active = true
+SpeedBar.ZIndex = 12
+SpeedBar.Parent = SpeedRow
+Corner(SpeedBar, 4)
+
+local SpeedFill = Instance.new("Frame")
+SpeedFill.Size = UDim2.new(S.SpeedValue / 500, 0, 1, 0)
+SpeedFill.BackgroundColor3 = Color3.fromRGB(0, 170, 235)
+SpeedFill.ZIndex = 13
+SpeedFill.Parent = SpeedBar
+Corner(SpeedFill, 4)
+
+local SpeedKnob = Instance.new("Frame")
+SpeedKnob.Size = UDim2.new(0, 17, 0, 17)
+SpeedKnob.AnchorPoint = Vector2.new(.5, .5)
+SpeedKnob.Position = UDim2.new(S.SpeedValue / 500, 0, .5, 0)
+SpeedKnob.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+SpeedKnob.ZIndex = 14
+SpeedKnob.Parent = SpeedBar
+Corner(SpeedKnob, 9)
+
+local SpeedDragging = false
+local function SetRunSpeed(x)
+    local p = math.clamp((x - SpeedBar.AbsolutePosition.X) / SpeedBar.AbsoluteSize.X, 0, 1)
+    S.SpeedValue = math.clamp(math.floor(p * 499) + 1, 1, 500)
+    SpeedValue.Text = tostring(S.SpeedValue)
+    SpeedFill.Size = UDim2.new(S.SpeedValue / 500, 0, 1, 0)
+    SpeedKnob.Position = UDim2.new(S.SpeedValue / 500, 0, .5, 0)
+end
+
+SpeedBar.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        SpeedDragging = true SetRunSpeed(i.Position.X)
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if SpeedDragging and (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        SetRunSpeed(i.Position.X)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        SpeedDragging = false
+    end
+end)
+
+-- ==================================================
+-- FIX LAG
+-- ==================================================
+local FixHeader = PageHeader(FixPage, "FixLag", "Performance utilities")
+local Saved = {}
+local FixConnection
+
+local function DisableEffect(o)
+    if o:IsA("ParticleEmitter")
+    or o:IsA("Trail")
+    or o:IsA("Beam")
+    or o:IsA("Smoke")
+    or o:IsA("Fire")
+    or o:IsA("Sparkles")
+    or o:IsA("PointLight")
+    or o:IsA("SpotLight")
+    or o:IsA("SurfaceLight") then
+        if Saved[o] == nil then Saved[o] = o.Enabled end
+        pcall(function() o.Enabled = false end)
+    end
+    if o:IsA("BasePart") then
+        if Saved[o] == nil then
+            Saved[o] = {CastShadow = o.CastShadow, Material = o.Material}
+        end
+        pcall(function()
+            o.CastShadow = false
+            if o.Material ~= Enum.Material.Water then
+                o.Material = Enum.Material.Plastic
+            end
+        end)
+    end
+end
+
+local function StartFix()
+    S.FixLag = true
+    for _, o in ipairs(Workspace:GetDescendants()) do DisableEffect(o) end
+    pcall(function()
+        Saved.GlobalShadows = Lighting.GlobalShadows
+        Lighting.GlobalShadows = false
+        Saved.EnvironmentDiffuseScale = Lighting.EnvironmentDiffuseScale
+        Lighting.EnvironmentDiffuseScale = 0
+        Saved.EnvironmentSpecularScale = Lighting.EnvironmentSpecularScale
+        Lighting.EnvironmentSpecularScale = 0
+        Saved.Brightness = Lighting.Brightness
+        Lighting.Brightness = 1
+    end)
+    pcall(function()
+        if Workspace.Terrain then
+            Saved.WaterWaveSize = Workspace.Terrain.WaterWaveSize
+            Workspace.Terrain.WaterWaveSize = 0
+            Saved.WaterWaveSpeed = Workspace.Terrain.WaterWaveSpeed
+            Workspace.Terrain.WaterWaveSpeed = 0
+            Saved.WaterReflectance = Workspace.Terrain.WaterReflectance
+            Workspace.Terrain.WaterReflectance = 0
+        end
+    end)
+    pcall(function()
+        if Workspace.StreamingEnabled then
+            Saved.StreamingTargetRadius = Workspace.StreamingTargetRadius
+            Workspace.StreamingTargetRadius = 256
+        end
+    end)
+    FixConnection = Workspace.DescendantAdded:Connect(function(o)
+        if S.FixLag then DisableEffect(o) end
+    end)
+end
+
+local function StopFix()
+    S.FixLag = false
+    if FixConnection then FixConnection:Disconnect() FixConnection = nil end
+    for o, v in pairs(Saved) do
+        if typeof(o) == "Instance" and o.Parent then
+            pcall(function()
+                if v.CastShadow ~= nil then o.CastShadow = v.CastShadow end
+                if v.Material ~= nil then o.Material = v.Material end
+                if v == true or v == false then o.Enabled = v end
+            end)
+        end
+    end
+    pcall(function()
+        if Saved.GlobalShadows ~= nil then Lighting.GlobalShadows = Saved.GlobalShadows end
+        if Saved.EnvironmentDiffuseScale ~= nil then Lighting.EnvironmentDiffuseScale = Saved.EnvironmentDiffuseScale end
+        if Saved.EnvironmentSpecularScale ~= nil then Lighting.EnvironmentSpecularScale = Saved.EnvironmentSpecularScale end
+        if Saved.Brightness ~= nil then Lighting.Brightness = Saved.Brightness end
+        if Saved.WaterWaveSize ~= nil and Workspace.Terrain then Workspace.Terrain.WaterWaveSize = Saved.WaterWaveSize end
+        if Saved.WaterWaveSpeed ~= nil and Workspace.Terrain then Workspace.Terrain.WaterWaveSpeed = Saved.WaterWaveSpeed end
+        if Saved.WaterReflectance ~= nil and Workspace.Terrain then Workspace.Terrain.WaterReflectance = Saved.WaterReflectance end
+        if Saved.StreamingTargetRadius ~= nil then Workspace.StreamingTargetRadius = Saved.StreamingTargetRadius end
+    end)
+    Saved = {}
+end
+
+local XT = Toggle(FixPage, T("fixlag"), T("fixlagDesc"), function(v)
+    if v then StartFix() else StopFix() end
+end)
+
+-- ==================================================
+-- STEAL AN EGG
+-- ==================================================
+local StealHeader = PageHeader(StealPage, T("steal"), "Steal An Egg utilities")
+
+local StatusRow = Row(StealPage, 48)
+local StatusLabel = Label(StatusRow, T("status") .. ": " .. T("statusOff"), 14, UDim2.new(0, 18, 0, 12))
+StatusLabel.TextColor3 = Color3.fromRGB(150, 160, 165)
+
+local EggListRow = Row(StealPage, 170)
+local EggListTitle = Label(EggListRow, T("eggLoc"), 15, UDim2.new(0, 18, 0, 10))
+local EggListText = Label(EggListRow, "Đang tải...", 11, UDim2.new(0, 18, 0, 35))
+EggListText.TextColor3 = Color3.fromRGB(140, 150, 155)
+EggListText.Size = UDim2.new(1, -36, 1, -50)
+EggListText.TextWrapped = true
+EggListText.TextYAlignment = Enum.TextYAlignment.Top
+EggListText.Font = Enum.Font.Code
+
+local function FindBiomeFolder(biomeName)
+    local folder = Workspace:FindFirstChild(biomeName)
+    if folder then return folder end
+    local searchName = biomeName:lower():gsub("[_%s]", "")
+    for _, v in ipairs(Workspace:GetChildren()) do
+        if v:IsA("Folder") or v:IsA("Model") then
+            local vName = v.Name:lower():gsub("[_%s]", "")
+            if vName == searchName then return v end
+            if vName:find(searchName) or searchName:find(vName) then return v end
+        end
+    end
+    return nil
+end
+
+local function GetEggInfo(eggName)
+    if EggData[eggName] then return EggData[eggName] end
+    local searchName = eggName:lower()
+    for k, v in pairs(EggData) do
+        if k:lower() == searchName then return v end
+    end
+    for k, v in pairs(EggData) do
+        if searchName:find(k:lower()) or k:lower():find(searchName) then return v end
+    end
+    return nil
+end
+
+local function ScanEggsInBiome(biomeEntry)
+    local eggs = {}
+    local folder = FindBiomeFolder(biomeEntry.name)
+    if not folder then return eggs end
+    for _, obj in ipairs(folder:GetDescendants()) do
+        if obj:IsA("BasePart") and obj.Name:lower():find("egg") then
+            local info = GetEggInfo(obj.Name)
+            table.insert(eggs, {
+                name = obj.Name, biome = biomeEntry.key,
+                biomeName = biomeEntry.name, part = obj, info = info
+            })
+        end
+    end
+    return eggs
+end
+
+local function ScanAllEggs()
+    local allEggs = {}
+    local seen = {}
+    for _, biome in ipairs(BiomeFolders) do
+        local eggs = ScanEggsInBiome(biome)
+        for _, egg in ipairs(eggs) do
+            local key = egg.part
+            if not seen[key] then
+                seen[key] = true
+                table.insert(allEggs, egg)
+            end
+        end
+    end
+    return allEggs
+end
+
+local function UpdateEggList()
+    local eggs = ScanAllEggs()
+    if #eggs == 0 then
+        EggListText.Text = T("noEggFound") .. "\n(Thử lại sau 5s hoặc kiểm tra tên Folder Biome)"
+        return
+    end
+    table.sort(eggs, function(a, b)
+        local aInfo = a.info or {}
+        local bInfo = b.info or {}
+        local aRarity = (aInfo.rarity or ""):lower()
+        local bRarity = (bInfo.rarity or ""):lower()
+        local aIsHigh = (aRarity == "secret" or aRarity == "mythic" or aRarity == "cosmic" or aRarity == "divine" or aRarity == "eternal") and 1 or 0
+        local bIsHigh = (bRarity == "secret" or bRarity == "mythic" or bRarity == "cosmic" or bRarity == "divine" or bRarity == "eternal") and 1 or 0
+        if aIsHigh ~= bIsHigh then return aIsHigh > bIsHigh end
+        local aVal = tonumber((aInfo.income or "$0"):gsub("[^%d%.]", "")) or 0
+        local bVal = tonumber((bInfo.income or "$0"):gsub("[^%d%.]", "")) or 0
+        return aVal > bVal
+    end)
+    local text = ""
+    for i, egg in ipairs(eggs) do
+        if i > 20 then text = text .. "\n... và " .. (#eggs - 20) .. " egg khác" break end
+        local info = egg.info or {}
+        text = text .. "• " .. egg.name .. "\n  [" .. egg.biomeName .. "] " .. (info.income or "?") .. " | " .. (info.rarity or "?") .. "\n"
+    end
+    EggListText.Text = text
+end
+
+task.spawn(function()
+    while task.wait(5) do
+        if StealPage.Visible then pcall(UpdateEggList) end
+    end
+end)
+
+local ScanRow = Row(StealPage, 55)
+local ScanBtn = Instance.new("TextButton")
+ScanBtn.Size = UDim2.new(1, -36, 0, 36)
+ScanBtn.Position = UDim2.new(0, 18, .5, -18)
+ScanBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 215)
+ScanBtn.Text = T("eggScan")
+ScanBtn.TextColor3 = Color3.new(1, 1, 1)
+ScanBtn.TextSize = 14
+ScanBtn.Font = Enum.Font.GothamBold
+ScanBtn.Active = true
+ScanBtn.ZIndex = 15
+ScanBtn.Parent = ScanRow
+Corner(ScanBtn, 9)
+ScanBtn.MouseButton1Click:Connect(function()
+    pcall(UpdateEggList)
+end)
+
+local PriorityToggle = Toggle(StealPage, T("prioritySecret"), T("prioritySecretDesc"), function(v)
+    S.PrioritySecret = v
+end)
+
+-- AUTO STEAL EGG
+local AutoStealConnection
+local AutoStealTarget = nil
+local MyBasePosition = nil
+
+local function GetMyBase()
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        if (obj:IsA("Model") or obj:IsA("Folder")) and obj.Name:lower():find(LP.Name:lower()) then
+            local primary = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+            if primary then return primary.Position end
+        end
+    end
+    local basesFolder = Workspace:FindFirstChild("Bases") or Workspace:FindFirstChild("Pens")
+    if basesFolder then
+        for _, obj in ipairs(basesFolder:GetChildren()) do
+            if obj.Name:lower():find(LP.Name:lower()) then
+                local primary = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+                if primary then return primary.Position end
+            end
+        end
+    end
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        local n = obj.Name:lower()
+        if n:find("collect") or n:find("spawn") or n:find("base") then
+            local primary = obj:FindFirstChildWhichIsA("BasePart")
+            if primary then return primary.Position end
+        end
+    end
+    return nil
+end
+
+local function FindNearestEgg(prioritySecret)
+    local char = LP.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return nil end
+    local allEggs = ScanAllEggs()
+    if #allEggs == 0 then return nil end
+
+    local best = nil
+    local bestScore = -math.huge
+    for _, egg in ipairs(allEggs) do
+        if egg.part and egg.part.Parent then
+            local dist = (egg.part.Position - root.Position).Magnitude
+            local info = egg.info or {}
+            local score = 0
+            if prioritySecret then
+                local r = (info.rarity or ""):lower()
+                if r == "secret" or r == "mythic" or r == "cosmic" or r == "divine" or r == "eternal" then
+                    score = score + 10000000
+                end
+            end
+            local val = tonumber((info.income or "$0"):gsub("[^%d%.]", "")) or 0
+            score = score + val * 1000
+            score = score - dist
+            if score > bestScore then
+                bestScore = score
+                best = egg
+            end
+        end
+    end
+    return best
+end
+
+local function StartAutoSteal()
+    S.AutoSteal = true
+    StatusLabel.Text = T("status") .. ": " .. T("statusOn")
+    StatusLabel.TextColor3 = Color3.fromRGB(0, 220, 100)
+
+    MyBasePosition = GetMyBase()
+    if AutoStealConnection then AutoStealConnection:Disconnect() end
+
+    AutoStealConnection = RunService.Heartbeat:Connect(function()
+        if not S.AutoSteal then return end
+        local char = LP.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if not root or not hum then return end
+
+        local carryingEgg = false
+        for _, obj in ipairs(char:GetChildren()) do
+            if obj.Name:lower():find("egg") then carryingEgg = true break end
+        end
+
+        if carryingEgg then
+            if MyBasePosition then
+                local dir = (MyBasePosition - root.Position)
+                if dir.Magnitude > 10 then
+                    hum:Move(dir.Unit, false)
+                    StatusLabel.Text = T("status") .. ": Đang mang Egg về Base..."
+                else
+                    StatusLabel.Text = T("status") .. ": Đã về Base!"
+                end
+            else
+                StatusLabel.Text = T("status") .. ": Đang tìm Base..."
+            end
+        else
+            local target = FindNearestEgg(S.PrioritySecret)
+            if target then
+                AutoStealTarget = target
+                local targetPos = target.part.Position
+                local dir = (targetPos - root.Position)
+                if dir.Magnitude > 5 then
+                    hum:Move(dir.Unit, false)
+                    local info = target.info or {}
+                    StatusLabel.Text = T("status") .. ": → " .. target.name .. " (" .. (info.income or "?") .. ")"
+                else
+                    StatusLabel.Text = T("status") .. ": Đã đến Egg, đang nhặt..."
+                end
+            else
+                StatusLabel.Text = T("status") .. ": Không thấy Egg"
+            end
+        end
+    end)
+end
+
+local function StopAutoSteal()
+    S.AutoSteal = false
+    if AutoStealConnection then AutoStealConnection:Disconnect() AutoStealConnection = nil end
+    StatusLabel.Text = T("status") .. ": " .. T("statusOff")
+    StatusLabel.TextColor3 = Color3.fromRGB(150, 160, 165)
+end
+
+local AutoStealToggle = Toggle(StealPage, T("autoSteal"), T("autoStealDesc"), function(v)
+    if v then StartAutoSteal() else StopAutoSteal() end
+end)
+
+-- ANTI TRAP
+local TrapConnection
+local DisabledTraps = {}
+
+local function DisableTrap(o)
+    if not o:IsA("BasePart") then return end
+    local n = o.Name:lower()
+    if n:find("trap") or n:find("bear") or n:find("bẫy")
+    or n:find("spike") or n:find("snare") or n:find("hunter") then
+        DisabledTraps[o] = {CanCollide = o.CanCollide, CanTouch = o.CanTouch}
+        pcall(function()
+            o.CanCollide = false
+            o.CanTouch = false
+        end)
+    end
+end
+
+local function StartAntiTrap()
+    S.AntiTrap = true
+    if TrapConnection then TrapConnection:Disconnect() end
+    for _, o in ipairs(Workspace:GetDescendants()) do DisableTrap(o) end
+    TrapConnection = Workspace.DescendantAdded:Connect(function(o)
+        if S.AntiTrap then DisableTrap(o) end
+    end)
+end
+
+local function StopAntiTrap()
+    S.AntiTrap = false
+    if TrapConnection then TrapConnection:Disconnect() TrapConnection = nil end
+    for o, v in pairs(DisabledTraps) do
+        if o.Parent then
+            pcall(function()
+                o.CanCollide = v.CanCollide
+                o.CanTouch = v.CanTouch
+            end)
+        end
+    end
+    DisabledTraps = {}
+end
+
+local AntiTrapToggle = Toggle(StealPage, T("antiTrap"), T("antiTrapDesc"), function(v)
+    if v then StartAntiTrap() else StopAntiTrap() end
+end)
+
+-- ScriptCard
+local function ScriptCard(parent, title, desc, url)
+    local r = Row(parent, 90)
+    local t = Label(r, title, 16, UDim2.new(0, 18, 0, 10))
+    t.Font = Enum.Font.GothamMedium
+    local d = Label(r, desc, 12, UDim2.new(0, 18, 0, 40))
+    d.TextColor3 = Color3.fromRGB(145, 155, 160)
+    d.Size = UDim2.new(1, -185, 0, 42)
+
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0, 135, 0, 36)
+    b.Position = UDim2.new(1, -153, .5, -18)
+    b.BackgroundColor3 = Color3.fromRGB(0, 150, 215)
+    b.Text = "EXECUTE"
+    b.TextColor3 = Color3.new(1, 1, 1)
+    b.TextSize = 13
+    b.Font = Enum.Font.GothamBold
+    b.Active = true
+    b.ZIndex = 15
+    b.Parent = r
+    Corner(b, 9)
+
+    b.MouseButton1Click:Connect(function()
+        b.Text = "LOADING..."
+        task.spawn(function()
+            local ok, err = pcall(function()
+                local code = game:HttpGet(url)
+                local fn = loadstring(code)
+                if fn then fn() else error("loadstring failed") end
+            end)
+            if ok then
+                b.Text = "EXECUTED"
+                task.wait(1)
+                b.Text = "EXECUTE"
+            else
+                b.Text = "ERROR"
+                warn("[Tnh-VN] " .. tostring(err))
+                task.wait(1.5)
+                b.Text = "EXECUTE"
+            end
+        end)
+    end)
+    return r
+end
+
+ScriptCard(StealPage, T("antichase"), "StealEggOnly",
+    "https://raw.githubusercontent.com/WhiteX1208/Scripts/refs/heads/main/StealEggOnly.luau")
+
+ScriptCard(StealPage, T("sena"), "Sena V3",
+    "https://raw.githubusercontent.com/senarblx/sena/refs/heads/main/senav3go")
+
+-- ==================================================
+-- UPDATE PAGE
+-- ==================================================
+local UpdateHeader = PageHeader(UpdatePage, T("update"), T("updateDesc"))
+
+local UpdateNoticeRow = Row(UpdatePage, 100)
+local UpdateNoticeTitle = Label(UpdateNoticeRow, "Phiên bản: Tnh-VN MENU", 16, UDim2.new(0, 18, 0, 14))
+UpdateNoticeTitle.Font = Enum.Font.GothamMedium
+local UpdateNoticeText = Label(UpdateNoticeRow, T("updateNotice"), 13, UDim2.new(0, 18, 0, 48))
+UpdateNoticeText.TextColor3 = Color3.fromRGB(0, 200, 255)
+UpdateNoticeText.Size = UDim2.new(1, -36, 1, -60)
+UpdateNoticeText.TextWrapped = true
+
+local UpdateFeaturesRow = Row(UpdatePage, 130)
+local UpdateFeaturesTitle = Label(UpdateFeaturesRow, "Tính năng đã sửa:", 15, UDim2.new(0, 18, 0, 12))
+UpdateFeaturesTitle.Font = Enum.Font.GothamMedium
+local UpdateFeaturesText = Label(UpdateFeaturesRow,
+    "• Fix quét Egg xịn (dùng Folder Biome riêng)\n" ..
+    "• Fix Auto Steal Egg hoạt động thật\n" ..
+    "• Fix Lag hoạt động (tắt shadow, particle, water)\n" ..
+    "• Thêm tab Update",
+    12, UDim2.new(0, 18, 0, 42))
+UpdateFeaturesText.TextColor3 = Color3.fromRGB(140, 220, 140)
+UpdateFeaturesText.Size = UDim2.new(1, -36, 1, -60)
+UpdateFeaturesText.TextWrapped = true
+UpdateFeaturesText.TextYAlignment = Enum.TextYAlignment.Top
+
+-- ==================================================
+-- LANGUAGE
+-- ==================================================
+local LangHeader = PageHeader(LangPage, T("language"), T("languageDesc"))
+local LR = Row(LangPage, 170)
+local LT = Label(LR, T("language"), 17, UDim2.new(0, 18, 0, 14))
+local LD = Label(LR, T("languageDesc"), 12, UDim2.new(0, 18, 0, 44))
+LD.TextColor3 = Color3.fromRGB(145, 155, 160)
+
+local LL = Instance.new("Frame")
+LL.Size = UDim2.new(1, -36, 0, 80)
+LL.Position = UDim2.new(0, 18, 0, 78)
+LL.BackgroundTransparency = 1
+LL.Parent = LR
+
+local Grid = Instance.new("UIGridLayout")
+Grid.CellSize = UDim2.new(.19, 0, 0, 38)
+Grid.CellPadding = UDim2.new(.012, 0, 0, 7)
+Grid.Parent = LL
+
+local Langs = {
+    {"VN", "🇻🇳"}, {"EN", "🇺🇸"}, {"TH", "🇹🇭"}, {"KR", "🇰🇷"}, {"CN", "🇨🇳"}
+}
+
+local LangButtons = {}
+
+local function Refresh()
+    Title.Text = T("title")
+    MB.Text = "  ⌂   " .. T("main")
+    FB.Text = "  ✈   Fly"
+    XB.Text = "  ⚡   FixLag"
+    SB.Text = "  🥚   " .. T("steal")
+    UB.Text = "  🔄   " .. T("update")
+    LB.Text = "  ⚙   " .. T("language")
+    MainHeader.Text = T("main")
+    ET.Title.Text = T("esp")
+    ET.Description.Text = T("espDesc")
+    CL.Text = T("color")
+    for i, v in ipairs(Colors) do
+        if ColorButtons[i] then ColorButtons[i].Text = T(v[1]) end
+    end
+    ColorOpen.Text = T((function()
+        for i, v in ipairs(Colors) do
+            if v[2] == S.ESPColor then return v[1] end
+        end
+        return "blue"
+    end)())
+    AHT.Title.Text = T("antiHit")
+    AHT.Description.Text = T("antiHitDesc")
+    ABT.Title.Text = T("antiban")
+    ABT.Description.Text = T("antibanDesc")
+    FT.Title.Text = T("fly")
+    FT.Description.Text = T("flyDesc")
+    FlySpeedTitle.Text = T("flySpeed")
+    SpeedToggle.Title.Text = T("speedToggle")
+    SpeedToggle.Description.Text = T("speedToggleDesc")
+    SpeedTitle.Text = T("speed")
+    XT.Title.Text = T("fixlag")
+    XT.Description.Text = T("fixlagDesc")
+    StealHeader.Text = T("steal")
+    EggListTitle.Text = T("eggLoc")
+    ScanBtn.Text = T("eggScan")
+    PriorityToggle.Title.Text = T("prioritySecret")
+    PriorityToggle.Description.Text = T("prioritySecretDesc")
+    AutoStealToggle.Title.Text = T("autoSteal")
+    AutoStealToggle.Description.Text = T("autoStealDesc")
+    AntiTrapToggle.Title.Text = T("antiTrap")
+    AntiTrapToggle.Description.Text = T("antiTrapDesc")
+    UpdateHeader.Text = T("update")
+    UpdateNoticeText.Text = T("updateNotice")
+    LangHeader.Text = T("language")
+    LT.Text = T("language")
+    LD.Text = T("languageDesc")
+end
+
+for _, v in ipairs(Langs) do
+    local code = v[1]
+    local b = Instance.new("TextButton")
+    b.Text = v[2] .. " " .. code
+    b.TextSize = 12
+    b.TextColor3 = Color3.new(1, 1, 1)
+    b.BackgroundColor3 = Color3.fromRGB(35, 42, 48)
+    b.BorderSizePixel = 0
+    b.Font = Enum.Font.GothamMedium
+    b.Active = true
+    b.ZIndex = 15
+    b.Parent = LL
+    Corner(b, 8)
+    LangButtons[code] = b
+    b.MouseButton1Click:Connect(function()
+        S.Language = code
+        for c, x in pairs(LangButtons) do
+            x.BackgroundColor3 = c == code
+                and Color3.fromRGB(0, 140, 200)
+                or Color3.fromRGB(35, 42, 48)
+        end
+        Refresh()
+    end)
+end
+LangButtons.VN.BackgroundColor3 = Color3.fromRGB(0, 140, 200)
+
+-- ==================================================
+-- FLOATING T BUTTON
+-- ==================================================
+local TButton = Instance.new("TextButton")
+TButton.Size = UDim2.new(0, 58, 0, 58)
+TButton.Position = UDim2.new(1, -78, .5, -29)
+TButton.BackgroundColor3 = Color3.fromRGB(18, 23, 27)
+TButton.Text = "T"
+TButton.TextSize = 26
+TButton.TextColor3 = Color3.new(1, 1, 1)
+TButton.Font = Enum.Font.GothamBold
+TButton.Visible = false
+TButton.Active = true
+TButton.ZIndex = 50
+TButton.Parent = Gui
+Corner(TButton, 29)
+Stroke(TButton, Color3.fromRGB(0, 170, 255), 2)
+
+local TD, TS, TP
+TButton.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        TD = true TS = i.Position TP = TButton.Position
+    end
+end)
+UIS.InputChanged:Connect(function(i)
+    if TD and (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        local d = i.Position - TS
+        TButton.Position = UDim2.new(TP.X.Scale, TP.X.Offset + d.X, TP.Y.Scale, TP.Y.Offset + d.Y)
+    end
+end)
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then TD = false end
+end)
+
+Min.MouseButton1Click:Connect(function()
+    Main.Visible = false Notice.Visible = false TButton.Visible = true
+end)
+TButton.MouseButton1Click:Connect(function()
+    Main.Visible = true Notice.Visible = true TButton.Visible = false
+end)
+
+Close.MouseButton1Click:Connect(function()
+    StopFly()
+    StopSpeed()
+    StopAntiHit()
+    StopAntiban()
+    StopFix()
+    StopAutoSteal()
+    StopAntiTrap()
+    for p in pairs(ESPObjects) do
+        if ESPObjects[p] then ESPObjects[p]:Destroy() end
+    end
+    Gui:Destroy()
+end)
+
+-- KHÔNG còn OpenPage("Main") ở đây vì Key System đã gọi
+print("Tnh-VN MENU loaded - Steal An Egg Edition")
