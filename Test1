@@ -1,0 +1,12 @@
+for _, o in ipairs(workspace:GetDescendants()) do
+    if o:IsA("BasePart") and o.Name:lower():find("egg") then
+        print("=== Part:", o:GetFullName())
+        for _, c in ipairs(o:GetChildren()) do
+            print("   child:", c.ClassName, c.Name)
+        end
+        for _, c in ipairs(o.Parent:GetChildren()) do
+            print("   parentchild:", c.ClassName, c.Name)
+        end
+        break
+    end
+end
