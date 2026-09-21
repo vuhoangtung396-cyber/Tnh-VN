@@ -1,0 +1,1289 @@
+-- Tnh-VN MENU
+-- Blox Fruits / Steal An Egg
+
+local Players=game:GetService("Players")
+local UIS=game:GetService("UserInputService")
+local RunService=game:GetService("RunService")
+local Lighting=game:GetService("Lighting")
+local Workspace=game:GetService("Workspace")
+local LP=Players.LocalPlayer
+
+local S={
+ ESP=false,
+ ESPColor=Color3.fromRGB(0,170,255),
+ Fly=false,
+ FlySpeed=100,
+ FixLag=false,
+ Language="VN"
+}
+
+local Text={
+ VN={
+  title="Tnh-VN MENU",
+  home="Home",
+  esp="ESP",
+  espDesc="Hiển thị Box người chơi",
+  color="Màu Box",
+  fly="Fly",
+  flyDesc="Bật / tắt chế độ bay",
+  speed="Tốc độ Fly",
+  speedToggle="Tăng tốc",
+  speedToggleDesc="Bật / tắt tốc độ Fly",
+  fixlag="FixLag",
+  fixlagDesc="Tối ưu game cho máy yếu",
+  steal="Steal An Egg",
+  language="Ngôn ngữ",
+  languageDesc="Thay đổi ngôn ngữ menu",
+  antichase="Anti Chase",
+  sena="Sena",
+  blue="Xanh dương",
+  red="Đỏ",
+  green="Xanh lá",
+  yellow="Vàng",
+  purple="Tím",
+  white="Trắng"
+ },
+
+ EN={
+  title="Tnh-VN MENU",
+  home="Home",
+  esp="ESP",
+  espDesc="Show player boxes",
+  color="Box Color",
+  fly="Fly",
+  flyDesc="Toggle flying mode",
+  speed="Fly Speed",
+  speedToggle="Speed",
+  speedToggleDesc="Enable / disable Fly speed",
+  fixlag="FixLag",
+  fixlagDesc="Optimize game performance",
+  steal="Steal An Egg",
+  language="Language",
+  languageDesc="Change menu language",
+  antichase="Anti Chase",
+  sena="Sena",
+  blue="Blue",
+  red="Red",
+  green="Green",
+  yellow="Yellow",
+  purple="Purple",
+  white="White"
+ },
+
+ TH={
+  title="Tnh-VN MENU",
+  home="หน้าหลัก",
+  esp="ESP",
+  espDesc="แสดงกรอบผู้เล่น",
+  color="สีกรอบ",
+  fly="บิน",
+  flyDesc="เปิด / ปิดการบิน",
+  speed="ความเร็วบิน",
+  speedToggle="ความเร็ว",
+  speedToggleDesc="เปิด / ปิดความเร็วบิน",
+  fixlag="FixLag",
+  fixlagDesc="เพิ่มประสิทธิภาพเกม",
+  steal="Steal An Egg",
+  language="ภาษา",
+  languageDesc="เปลี่ยนภาษาของเมนู",
+  antichase="Anti Chase",
+  sena="Sena",
+  blue="ฟ้า",
+  red="แดง",
+  green="เขียว",
+  yellow="เหลือง",
+  purple="ม่วง",
+  white="ขาว"
+ },
+
+ KR={
+  title="Tnh-VN MENU",
+  home="홈",
+  esp="ESP",
+  espDesc="플레이어 박스 표시",
+  color="박스 색상",
+  fly="비행",
+  flyDesc="비행 켜기 / 끄기",
+  speed="비행 속도",
+  speedToggle="속도",
+  speedToggleDesc="비행 속도 켜기 / 끄기",
+  fixlag="FixLag",
+  fixlagDesc="저사양 기기 최적화",
+  steal="Steal An Egg",
+  language="언어",
+  languageDesc="메뉴 언어 변경",
+  antichase="Anti Chase",
+  sena="Sena",
+  blue="파랑",
+  red="빨강",
+  green="초록",
+  yellow="노랑",
+  purple="보라",
+  white="흰색"
+ },
+
+ CN={
+  title="Tnh-VN MENU",
+  home="主页",
+  esp="ESP",
+  espDesc="显示玩家方框",
+  color="方框颜色",
+  fly="飞行",
+  flyDesc="开启 / 关闭飞行",
+  speed="飞行速度",
+  speedToggle="速度",
+  speedToggleDesc="开启 / 关闭飞行速度",
+  fixlag="FixLag",
+  fixlagDesc="优化低端设备性能",
+  steal="Steal An Egg",
+  language="语言",
+  languageDesc="更改菜单语言",
+  antichase="Anti Chase",
+  sena="Sena",
+  blue="蓝色",
+  red="红色",
+  green="绿色",
+  yellow="黄色",
+  purple="紫色",
+  white="白色"
+ }
+}
+
+local function T(k)
+ return Text[S.Language][k]
+end
+
+local Gui=Instance.new("ScreenGui")
+Gui.Name="TnhVN_MENU_VIP"
+Gui.ResetOnSpawn=false
+Gui.IgnoreGuiInset=true
+Gui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
+
+pcall(function()
+ Gui.Parent=gethui()
+end)
+
+if not Gui.Parent then
+ Gui.Parent=LP:WaitForChild("PlayerGui")
+end
+
+local function Corner(o,r)
+ local c=Instance.new("UICorner")
+ c.CornerRadius=UDim.new(0,r)
+ c.Parent=o
+end
+
+local function Stroke(o,c,t)
+ local s=Instance.new("UIStroke")
+ s.Color=c
+ s.Thickness=t or 1
+ s.Transparency=.35
+ s.Parent=o
+end
+
+local function Label(p,txt,size,pos)
+ local l=Instance.new("TextLabel")
+ l.BackgroundTransparency=1
+ l.Text=txt
+ l.TextColor3=Color3.fromRGB(240,240,240)
+ l.TextSize=size
+ l.Font=Enum.Font.Gotham
+ l.TextXAlignment=Enum.TextXAlignment.Left
+ l.Position=pos
+ l.ZIndex=10
+ l.Parent=p
+ return l
+end
+
+-- TOP TITLE
+local Notice=Label(
+ Gui,
+ "Tnh-VN MENU",
+ 13,
+ UDim2.new(.5,-120,0,5)
+)
+
+Notice.Size=UDim2.new(0,240,0,25)
+Notice.TextXAlignment=Enum.TextXAlignment.Center
+Notice.TextColor3=Color3.fromRGB(190,200,205)
+
+-- MAIN
+local Main=Instance.new("Frame")
+Main.Name="Main"
+Main.Size=UDim2.new(0,700,0,470)
+Main.Position=UDim2.new(.5,-350,.5,-235)
+Main.BackgroundColor3=Color3.fromRGB(17,22,25)
+Main.BorderSizePixel=0
+Main.Active=true
+Main.ZIndex=1
+Main.Parent=Gui
+Corner(Main,16)
+Stroke(Main,Color3.fromRGB(75,85,90),1)
+
+-- TOP BAR
+local Top=Instance.new("Frame")
+Top.Size=UDim2.new(1,0,0,65)
+Top.BackgroundColor3=Color3.fromRGB(20,26,29)
+Top.BorderSizePixel=0
+Top.Active=true
+Top.ZIndex=3
+Top.Parent=Main
+Corner(Top,16)
+
+local Title=Label(
+ Top,
+ T("title"),
+ 21,
+ UDim2.new(0,22,0,9)
+)
+
+Title.Size=UDim2.new(1,-150,0,28)
+Title.Font=Enum.Font.GothamMedium
+
+local Subtitle=Label(
+ Top,
+ "Blox Fruits Utility",
+ 12,
+ UDim2.new(0,23,0,38)
+)
+
+Subtitle.TextColor3=Color3.fromRGB(135,145,150)
+
+local Min=Instance.new("TextButton")
+Min.Size=UDim2.new(0,42,0,42)
+Min.Position=UDim2.new(1,-92,0,11)
+Min.BackgroundTransparency=1
+Min.Text="−"
+Min.TextSize=30
+Min.TextColor3=Color3.fromRGB(235,235,235)
+Min.Font=Enum.Font.Gotham
+Min.Active=true
+Min.ZIndex=20
+Min.Parent=Top
+
+local Close=Instance.new("TextButton")
+Close.Size=UDim2.new(0,42,0,42)
+Close.Position=UDim2.new(1,-48,0,11)
+Close.BackgroundTransparency=1
+Close.Text="×"
+Close.TextSize=30
+Close.TextColor3=Color3.fromRGB(235,235,235)
+Close.Font=Enum.Font.Gotham
+Close.Active=true
+Close.ZIndex=20
+Close.Parent=Top
+
+-- DRAG MAIN
+local drag,ds,sp
+
+Top.InputBegan:Connect(function(i)
+ if i.UserInputType==Enum.UserInputType.Touch
+ or i.UserInputType==Enum.UserInputType.MouseButton1 then
+  drag=true
+  ds=i.Position
+  sp=Main.Position
+ end
+end)
+
+UIS.InputChanged:Connect(function(i)
+ if drag and(
+  i.UserInputType==Enum.UserInputType.Touch
+  or i.UserInputType==Enum.UserInputType.MouseMovement
+ )then
+  local d=i.Position-ds
+  Main.Position=UDim2.new(
+   sp.X.Scale,
+   sp.X.Offset+d.X,
+   sp.Y.Scale,
+   sp.Y.Offset+d.Y
+  )
+ end
+end)
+
+UIS.InputEnded:Connect(function(i)
+ if i.UserInputType==Enum.UserInputType.Touch
+ or i.UserInputType==Enum.UserInputType.MouseButton1 then
+  drag=false
+ end
+end)
+
+-- SIDEBAR
+local Sidebar=Instance.new("Frame")
+Sidebar.Name="Sidebar"
+Sidebar.Size=UDim2.new(0,170,1,-82)
+Sidebar.Position=UDim2.new(0,10,0,72)
+Sidebar.BackgroundColor3=Color3.fromRGB(21,27,30)
+Sidebar.BorderSizePixel=0
+Sidebar.Active=true
+Sidebar.ZIndex=20
+Sidebar.Parent=Main
+Corner(Sidebar,12)
+
+local SideTitle=Label(
+ Sidebar,
+ "☰  "..T("home"),
+ 17,
+ UDim2.new(0,20,0,17)
+)
+
+SideTitle.Size=UDim2.new(1,-25,0,35)
+SideTitle.Font=Enum.Font.GothamMedium
+SideTitle.ZIndex=21
+
+local SideLine=Instance.new("Frame")
+SideLine.Size=UDim2.new(1,-24,0,1)
+SideLine.Position=UDim2.new(0,12,0,60)
+SideLine.BackgroundColor3=Color3.fromRGB(50,60,65)
+SideLine.BorderSizePixel=0
+SideLine.ZIndex=21
+SideLine.Parent=Sidebar
+
+local SideList=Instance.new("Frame")
+SideList.Size=UDim2.new(1,-14,1,-75)
+SideList.Position=UDim2.new(0,7,0,70)
+SideList.BackgroundTransparency=1
+SideList.Active=true
+SideList.ZIndex=21
+SideList.Parent=Sidebar
+
+local SideLayout=Instance.new("UIListLayout")
+SideLayout.Padding=UDim.new(0,8)
+SideLayout.HorizontalAlignment=Enum.HorizontalAlignment.Center
+SideLayout.Parent=SideList
+
+local Pages={}
+local Buttons={}
+
+local function Page(name)
+ local p=Instance.new("ScrollingFrame")
+ p.Name=name.."Page"
+ p.Size=UDim2.new(1,-195,1,-85)
+ p.Position=UDim2.new(0,185,0,75)
+ p.BackgroundTransparency=1
+ p.BorderSizePixel=0
+ p.ScrollBarThickness=4
+ p.ScrollBarImageColor3=Color3.fromRGB(0,170,235)
+ p.Visible=false
+ p.Active=true
+ p.ZIndex=5
+ p.Parent=Main
+
+ local l=Instance.new("UIListLayout")
+ l.Padding=UDim.new(0,12)
+ l.Parent=p
+
+ l:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+  p.CanvasSize=UDim2.new(
+   0,
+   0,
+   0,
+   l.AbsoluteContentSize.Y+20
+  )
+ end)
+
+ Pages[name]=p
+ return p
+end
+
+local ESPPage=Page("ESP")
+local FlyPage=Page("Fly")
+local FixPage=Page("FixLag")
+local StealPage=Page("StealAnEgg")
+local LangPage=Page("Language")
+
+local function SideButton(name,text,icon)
+ local b=Instance.new("TextButton")
+
+ b.Name=name
+ b.Size=UDim2.new(1,-10,0,48)
+ b.BackgroundColor3=Color3.fromRGB(29,36,40)
+ b.BorderSizePixel=0
+
+ b.Text="  "..icon.."   "..text
+ b.TextColor3=Color3.fromRGB(225,230,232)
+ b.TextSize=14
+ b.Font=Enum.Font.GothamMedium
+ b.TextXAlignment=Enum.TextXAlignment.Left
+
+ b.AutoButtonColor=true
+ b.Active=true
+ b.Selectable=true
+ b.ZIndex=25
+
+ b.Parent=SideList
+ Corner(b,10)
+
+ Buttons[name]=b
+
+ return b
+end
+
+local EB=SideButton("ESP","ESP","◉")
+local FB=SideButton("Fly","Fly","✈")
+local XB=SideButton("FixLag","FixLag","⚡")
+local SB=SideButton("StealAnEgg","Steal An Egg","🥚")
+local LB=SideButton("Language","Language","⚙")
+
+-- CLICK SIDEBAR
+EB.MouseButton1Click:Connect(function()
+ OpenPage("ESP")
+end)
+
+FB.MouseButton1Click:Connect(function()
+ OpenPage("Fly")
+end)
+
+XB.MouseButton1Click:Connect(function()
+ OpenPage("FixLag")
+end)
+
+SB.MouseButton1Click:Connect(function()
+ OpenPage("StealAnEgg")
+end)
+
+LB.MouseButton1Click:Connect(function()
+ OpenPage("Language")
+end)
+
+function OpenPage(name)
+ for n,p in pairs(Pages)do
+  p.Visible=(n==name)
+ end
+
+ for n,b in pairs(Buttons)do
+  if n==name then
+   b.BackgroundColor3=Color3.fromRGB(0,150,215)
+  else
+   b.BackgroundColor3=Color3.fromRGB(29,36,40)
+  end
+ end
+end
+
+local function PageHeader(parent,title,desc)
+ local h=Label(
+  parent,
+  title,
+  29,
+  UDim2.new(0,5,0,0)
+ )
+
+ h.Size=UDim2.new(1,-10,0,42)
+ h.Font=Enum.Font.GothamMedium
+
+ local d=Label(
+  parent,
+  desc,
+  13,
+  UDim2.new(0,7,0,43)
+ )
+
+ d.Size=UDim2.new(1,-15,0,30)
+ d.TextColor3=Color3.fromRGB(145,155,160)
+
+ local space=Instance.new("Frame")
+ space.Size=UDim2.new(1,0,0,76)
+ space.BackgroundTransparency=1
+ space.Parent=parent
+
+ return h,d
+end
+
+local function Row(parent,h)
+ local r=Instance.new("Frame")
+ r.Size=UDim2.new(1,-8,0,h)
+ r.BackgroundColor3=Color3.fromRGB(25,31,34)
+ r.BorderSizePixel=0
+ r.ZIndex=6
+ r.Parent=parent
+ Corner(r,11)
+ Stroke(r,Color3.fromRGB(55,65,70),1)
+ return r
+end
+
+local function Toggle(parent,title,desc,callback)
+ local r=Row(parent,82)
+
+ local tl=Label(
+  r,
+  title,
+  16,
+  UDim2.new(0,18,0,10)
+ )
+
+ local dl=Label(
+  r,
+  desc,
+  12,
+  UDim2.new(0,18,0,42)
+ )
+
+ tl.Size=UDim2.new(1,-125,0,25)
+ dl.Size=UDim2.new(1,-125,0,27)
+ dl.TextColor3=Color3.fromRGB(150,160,165)
+
+ local b=Instance.new("TextButton")
+ b.Size=UDim2.new(0,70,0,36)
+ b.Position=UDim2.new(1,-88,.5,-18)
+ b.Text=""
+ b.BackgroundColor3=Color3.fromRGB(65,72,78)
+ b.Active=true
+ b.ZIndex=15
+ b.Parent=r
+ Corner(b,18)
+
+ local k=Instance.new("Frame")
+ k.Size=UDim2.new(0,28,0,28)
+ k.Position=UDim2.new(0,4,.5,-14)
+ k.BackgroundColor3=Color3.fromRGB(220,225,228)
+ k.ZIndex=16
+ k.Parent=b
+ Corner(k,14)
+
+ local on=false
+
+ local function Render()
+  if on then
+   b.BackgroundColor3=Color3.fromRGB(0,170,235)
+   k.BackgroundColor3=Color3.fromRGB(18,25,29)
+   k.Position=UDim2.new(1,-32,.5,-14)
+  else
+   b.BackgroundColor3=Color3.fromRGB(65,72,78)
+   k.BackgroundColor3=Color3.fromRGB(220,225,228)
+   k.Position=UDim2.new(0,4,.5,-14)
+  end
+ end
+
+ b.MouseButton1Click:Connect(function()
+  on=not on
+  Render()
+  callback(on)
+ end)
+
+ Render()
+
+ return{
+  Row=r,
+  Title=tl,
+  Description=dl
+ }
+end
+
+-- ESP
+local ESPHeader=PageHeader(
+ ESPPage,
+ "ESP",
+ "Player visual utilities"
+)
+
+local ESPObjects={}
+
+local function AddESP(p)
+ if p==LP or ESPObjects[p] or not p.Character then
+  return
+ end
+
+ local h=Instance.new("Highlight")
+ h.Name="TnhVN_ESP"
+ h.Adornee=p.Character
+ h.FillColor=S.ESPColor
+ h.OutlineColor=S.ESPColor
+ h.FillTransparency=.78
+ h.OutlineTransparency=0
+ h.DepthMode=Enum.HighlightDepthMode.AlwaysOnTop
+ h.Parent=p.Character
+
+ ESPObjects[p]=h
+end
+
+local function UpdateESP()
+ for _,p in ipairs(Players:GetPlayers())do
+  if p~=LP then
+   if S.ESP then
+    AddESP(p)
+
+    if ESPObjects[p]then
+     ESPObjects[p].Enabled=true
+     ESPObjects[p].FillColor=S.ESPColor
+     ESPObjects[p].OutlineColor=S.ESPColor
+    end
+   elseif ESPObjects[p]then
+    ESPObjects[p].Enabled=false
+   end
+  end
+ end
+end
+
+Players.PlayerAdded:Connect(function(p)
+ p.CharacterAdded:Connect(function()
+  task.wait(.5)
+  if S.ESP then
+   AddESP(p)
+  end
+ end)
+end)
+
+local ET=Toggle(
+ ESPPage,
+ T("esp"),
+ T("espDesc"),
+ function(v)
+  S.ESP=v
+  UpdateESP()
+ end
+)
+
+local CR=Row(ESPPage,82)
+
+local CL=Label(
+ CR,
+ T("color"),
+ 15,
+ UDim2.new(0,18,0,27)
+)
+
+local CP=Instance.new("TextButton")
+CP.Size=UDim2.new(0,135,0,38)
+CP.Position=UDim2.new(1,-155,.5,-19)
+CP.TextColor3=Color3.new(1,1,1)
+CP.TextSize=12
+CP.Font=Enum.Font.GothamMedium
+CP.Active=true
+CP.ZIndex=15
+CP.Parent=CR
+Corner(CP,9)
+
+local Colors={
+ {"blue",Color3.fromRGB(0,170,255)},
+ {"red",Color3.fromRGB(255,60,60)},
+ {"green",Color3.fromRGB(50,220,100)},
+ {"yellow",Color3.fromRGB(255,220,40)},
+ {"purple",Color3.fromRGB(180,80,255)},
+ {"white",Color3.fromRGB(245,245,245)}
+}
+
+local CI=1
+
+local function UpdateColor()
+ CP.Text=T(Colors[CI][1])
+ CP.BackgroundColor3=Colors[CI][2]
+end
+
+CP.MouseButton1Click:Connect(function()
+ CI=CI%#Colors+1
+ S.ESPColor=Colors[CI][2]
+ UpdateColor()
+ UpdateESP()
+end)
+
+UpdateColor()
+
+-- FLY
+local FlyHeader=PageHeader(
+ FlyPage,
+ "Fly",
+ "Movement utilities"
+)
+
+local FlyConnection
+local FlySpeedEnabled=false
+
+local function StopFly()
+ S.Fly=false
+
+ if FlyConnection then
+  FlyConnection:Disconnect()
+  FlyConnection=nil
+ end
+
+ local c=LP.Character
+ local r=c and c:FindFirstChild("HumanoidRootPart")
+
+ if r then
+  local bv=r:FindFirstChild("TnhVN_FlyVelocity")
+  local bg=r:FindFirstChild("TnhVN_FlyGyro")
+
+  if bv then
+   bv:Destroy()
+  end
+
+  if bg then
+   bg:Destroy()
+  end
+ end
+end
+
+local function StartFly()
+ StopFly()
+
+ local c=LP.Character
+ local r=c and c:FindFirstChild("HumanoidRootPart")
+ local h=c and c:FindFirstChildOfClass("Humanoid")
+
+ if not r or not h then
+  return
+ end
+
+ S.Fly=true
+
+ local bv=Instance.new("BodyVelocity")
+ bv.Name="TnhVN_FlyVelocity"
+ bv.MaxForce=Vector3.new(math.huge,math.huge,math.huge)
+ bv.P=12500
+ bv.Velocity=Vector3.zero
+ bv.Parent=r
+
+ local bg=Instance.new("BodyGyro")
+ bg.Name="TnhVN_FlyGyro"
+ bg.MaxTorque=Vector3.new(math.huge,math.huge,math.huge)
+ bg.P=25000
+ bg.D=1000
+ bg.CFrame=r.CFrame
+ bg.Parent=r
+
+ h.PlatformStand=false
+
+ FlyConnection=RunService.RenderStepped:Connect(function()
+  if not S.Fly or not r.Parent or not h.Parent then
+   StopFly()
+   return
+  end
+
+  local cam=Workspace.CurrentCamera
+
+  if not cam then
+   return
+  end
+
+  local speed
+
+  if FlySpeedEnabled then
+   speed=S.FlySpeed
+  else
+   speed=35
+  end
+
+  local move=Vector3.zero
+  local look=cam.CFrame.LookVector
+  local md=h.MoveDirection
+
+  if md.Magnitude>0 then
+   local horizontal=Vector3.new(
+    md.X,
+    0,
+    md.Z
+   )
+
+   if horizontal.Magnitude>0 then
+    horizontal=horizontal.Unit
+   end
+
+   local vertical=look.Y
+
+   move=Vector3.new(
+    horizontal.X,
+    vertical,
+    horizontal.Z
+   )
+
+   if move.Magnitude>0 then
+    move=move.Unit
+   end
+  end
+
+  bv.Velocity=move*speed
+
+  bg.CFrame=CFrame.lookAt(
+   r.Position,
+   r.Position+look
+  )
+
+  h.PlatformStand=true
+ end)
+end
+
+-- FLY TOGGLE
+local FT=Toggle(
+ FlyPage,
+ T("fly"),
+ T("flyDesc"),
+ function(v)
+  if v then
+   StartFly()
+  else
+   StopFly()
+  end
+ end
+)
+
+-- SPEED TOGGLE
+local SpeedToggle=Toggle(
+ FlyPage,
+ T("speedToggle"),
+ T("speedToggleDesc"),
+ function(v)
+  FlySpeedEnabled=v
+ end
+)
+
+-- SPEED SLIDER
+local SR=Row(FlyPage,100)
+
+local ST=Label(
+ SR,
+ T("speed"),
+ 15,
+ UDim2.new(0,18,0,13)
+)
+
+local SV=Label(
+ SR,
+ tostring(S.FlySpeed),
+ 13,
+ UDim2.new(1,-80,0,13)
+)
+
+SV.Size=UDim2.new(0,60,0,22)
+SV.TextXAlignment=Enum.TextXAlignment.Right
+SV.TextColor3=Color3.fromRGB(0,190,255)
+
+local Bar=Instance.new("Frame")
+Bar.Size=UDim2.new(1,-36,0,8)
+Bar.Position=UDim2.new(0,18,1,-27)
+Bar.BackgroundColor3=Color3.fromRGB(55,65,72)
+Bar.Active=true
+Bar.ZIndex=12
+Bar.Parent=SR
+Corner(Bar,4)
+
+local Fill=Instance.new("Frame")
+Fill.Size=UDim2.new(S.FlySpeed/500,0,1,0)
+Fill.BackgroundColor3=Color3.fromRGB(0,170,235)
+Fill.ZIndex=13
+Fill.Parent=Bar
+Corner(Fill,4)
+
+local Knob=Instance.new("Frame")
+Knob.Size=UDim2.new(0,17,0,17)
+Knob.AnchorPoint=Vector2.new(.5,.5)
+Knob.Position=UDim2.new(S.FlySpeed/500,0,.5,0)
+Knob.BackgroundColor3=Color3.fromRGB(240,240,240)
+Knob.ZIndex=14
+Knob.Parent=Bar
+Corner(Knob,9)
+
+local SpeedDrag=false
+
+local function SetSpeed(x)
+ local p=math.clamp(
+  (x-Bar.AbsolutePosition.X)/Bar.AbsoluteSize.X,
+  0,
+  1
+ )
+
+ S.FlySpeed=math.clamp(
+  math.floor(p*499)+1,
+  1,
+  500
+ )
+
+ SV.Text=tostring(S.FlySpeed)
+
+ Fill.Size=UDim2.new(
+  S.FlySpeed/500,
+  0,
+  1,
+  0
+ )
+
+ Knob.Position=UDim2.new(
+  S.FlySpeed/500,
+  0,
+  .5,
+  0
+ )
+end
+
+Bar.InputBegan:Connect(function(i)
+ if i.UserInputType==Enum.UserInputType.Touch
+ or i.UserInputType==Enum.UserInputType.MouseButton1 then
+  SpeedDrag=true
+  SetSpeed(i.Position.X)
+ end
+end)
+
+UIS.InputChanged:Connect(function(i)
+ if SpeedDrag and(
+  i.UserInputType==Enum.UserInputType.Touch
+  or i.UserInputType==Enum.UserInputType.MouseMovement
+ )then
+  SetSpeed(i.Position.X)
+ end
+end)
+
+UIS.InputEnded:Connect(function(i)
+ if i.UserInputType==Enum.UserInputType.Touch
+ or i.UserInputType==Enum.UserInputType.MouseButton1 then
+  SpeedDrag=false
+ end
+end)
+
+-- FIX LAG
+local FixHeader=PageHeader(
+ FixPage,
+ "FixLag",
+ "Performance utilities"
+)
+
+local Saved={}
+local FixConnection
+
+local function DisableEffect(o)
+ if o:IsA("ParticleEmitter")
+ or o:IsA("Trail")
+ or o:IsA("Beam")
+ or o:IsA("Smoke")
+ or o:IsA("Fire")
+ or o:IsA("Sparkles")then
+
+  if Saved[o]==nil then
+   Saved[o]=o.Enabled
+  end
+
+  pcall(function()
+   o.Enabled=false
+  end)
+ end
+end
+
+local function StartFix()
+ S.FixLag=true
+
+ for _,o in ipairs(Workspace:GetDescendants())do
+  DisableEffect(o)
+ end
+
+ Saved.GlobalShadows=Lighting.GlobalShadows
+ Lighting.GlobalShadows=false
+
+ FixConnection=Workspace.DescendantAdded:Connect(function(o)
+  if S.FixLag then
+   DisableEffect(o)
+  end
+ end)
+end
+
+local function StopFix()
+ S.FixLag=false
+
+ if FixConnection then
+  FixConnection:Disconnect()
+  FixConnection=nil
+ end
+
+ for o,v in pairs(Saved)do
+  if typeof(o)=="Instance" and o.Parent then
+   pcall(function()
+    o.Enabled=v
+   end)
+  end
+ end
+
+ if Saved.GlobalShadows~=nil then
+  Lighting.GlobalShadows=Saved.GlobalShadows
+ end
+
+ Saved={}
+end
+
+local XT=Toggle(
+ FixPage,
+ T("fixlag"),
+ T("fixlagDesc"),
+ function(v)
+  if v then
+   StartFix()
+  else
+   StopFix()
+  end
+ end
+)
+
+-- STEAL AN EGG
+local StealHeader=PageHeader(
+ StealPage,
+ T("steal"),
+ "External utilities"
+)
+
+local function ScriptCard(parent,title,desc,url)
+ local r=Row(parent,100)
+
+ local t=Label(
+  r,
+  title,
+  18,
+  UDim2.new(0,18,0,12)
+ )
+
+ t.Font=Enum.Font.GothamMedium
+
+ local d=Label(
+  r,
+  desc,
+  12,
+  UDim2.new(0,18,0,43)
+ )
+
+ d.TextColor3=Color3.fromRGB(145,155,160)
+ d.Size=UDim2.new(1,-185,0,42)
+
+ local b=Instance.new("TextButton")
+ b.Size=UDim2.new(0,135,0,40)
+ b.Position=UDim2.new(1,-153,.5,-20)
+ b.BackgroundColor3=Color3.fromRGB(0,150,215)
+ b.Text="EXECUTE"
+ b.TextColor3=Color3.new(1,1,1)
+ b.TextSize=13
+ b.Font=Enum.Font.GothamBold
+ b.Active=true
+ b.ZIndex=15
+ b.Parent=r
+ Corner(b,9)
+
+ b.MouseButton1Click:Connect(function()
+  b.Text="LOADING..."
+
+  task.spawn(function()
+   local ok,err=pcall(function()
+    local code=game:HttpGet(url)
+    local fn=loadstring(code)
+
+    if fn then
+     fn()
+    else
+     error("loadstring failed")
+    end
+   end)
+
+   if ok then
+    b.Text="EXECUTED"
+    task.wait(1)
+    b.Text="EXECUTE"
+   else
+    b.Text="ERROR"
+    warn("[Tnh-VN] "..tostring(err))
+    task.wait(1.5)
+    b.Text="EXECUTE"
+   end
+  end)
+ end)
+
+ return r
+end
+
+ScriptCard(
+ StealPage,
+ T("antichase"),
+ "StealEggOnly",
+ "https://raw.githubusercontent.com/WhiteX1208/Scripts/refs/heads/main/StealEggOnly.luau"
+)
+
+ScriptCard(
+ StealPage,
+ T("sena"),
+ "Sena V3",
+ "https://raw.githubusercontent.com/senarblx/sena/refs/heads/main/senav3go"
+)
+
+-- LANGUAGE
+local LangHeader=PageHeader(
+ LangPage,
+ T("language"),
+ T("languageDesc")
+)
+
+local LR=Row(LangPage,170)
+
+local LT=Label(
+ LR,
+ T("language"),
+ 17,
+ UDim2.new(0,18,0,14)
+)
+
+local LD=Label(
+ LR,
+ T("languageDesc"),
+ 12,
+ UDim2.new(0,18,0,44)
+)
+
+LD.TextColor3=Color3.fromRGB(145,155,160)
+
+local LL=Instance.new("Frame")
+LL.Size=UDim2.new(1,-36,0,80)
+LL.Position=UDim2.new(0,18,0,78)
+LL.BackgroundTransparency=1
+LL.Parent=LR
+
+local Grid=Instance.new("UIGridLayout")
+Grid.CellSize=UDim2.new(.19,0,0,38)
+Grid.CellPadding=UDim2.new(.012,0,0,7)
+Grid.Parent=LL
+
+local Langs={
+ {"VN","🇻🇳"},
+ {"EN","🇺🇸"},
+ {"TH","🇹🇭"},
+ {"KR","🇰🇷"},
+ {"CN","🇨🇳"}
+}
+
+local LangButtons={}
+
+local function Refresh()
+ Title.Text=T("title")
+
+ EB.Text="  ◉   "..T("esp")
+ FB.Text="  ✈   "..T("fly")
+ XB.Text="  ⚡   "..T("fixlag")
+ SB.Text="  🥚   "..T("steal")
+ LB.Text="  ⚙   "..T("language")
+
+ SideTitle.Text="☰  "..T("home")
+
+ ET.Title.Text=T("esp")
+ ET.Description.Text=T("espDesc")
+
+ CL.Text=T("color")
+ UpdateColor()
+
+ FT.Title.Text=T("fly")
+ FT.Description.Text=T("flyDesc")
+
+ SpeedToggle.Title.Text=T("speedToggle")
+ SpeedToggle.Description.Text=T("speedToggleDesc")
+
+ ST.Text=T("speed")
+
+ XT.Title.Text=T("fixlag")
+ XT.Description.Text=T("fixlagDesc")
+
+ StealHeader.Text=T("steal")
+ LangHeader.Text=T("language")
+
+ LT.Text=T("language")
+ LD.Text=T("languageDesc")
+end
+
+for _,v in ipairs(Langs)do
+ local code=v[1]
+
+ local b=Instance.new("TextButton")
+ b.Text=v[2].." "..code
+ b.TextSize=12
+ b.TextColor3=Color3.new(1,1,1)
+ b.BackgroundColor3=Color3.fromRGB(35,42,48)
+ b.BorderSizePixel=0
+ b.Font=Enum.Font.GothamMedium
+ b.Active=true
+ b.ZIndex=15
+ b.Parent=LL
+
+ Corner(b,8)
+
+ LangButtons[code]=b
+
+ b.MouseButton1Click:Connect(function()
+  S.Language=code
+
+  for c,x in pairs(LangButtons)do
+   x.BackgroundColor3=c==code
+    and Color3.fromRGB(0,140,200)
+    or Color3.fromRGB(35,42,48)
+  end
+
+  Refresh()
+ end)
+end
+
+LangButtons.VN.BackgroundColor3=Color3.fromRGB(0,140,200)
+
+-- FLOATING T BUTTON
+local TButton=Instance.new("TextButton")
+TButton.Size=UDim2.new(0,58,0,58)
+TButton.Position=UDim2.new(1,-78,.5,-29)
+TButton.BackgroundColor3=Color3.fromRGB(18,23,27)
+TButton.Text="T"
+TButton.TextSize=26
+TButton.TextColor3=Color3.new(1,1,1)
+TButton.Font=Enum.Font.GothamBold
+TButton.Visible=false
+TButton.Active=true
+TButton.ZIndex=50
+TButton.Parent=Gui
+Corner(TButton,29)
+Stroke(TButton,Color3.fromRGB(0,170,255),2)
+
+local TD,TS,TP
+
+TButton.InputBegan:Connect(function(i)
+ if i.UserInputType==Enum.UserInputType.Touch
+ or i.UserInputType==Enum.UserInputType.MouseButton1 then
+  TD=true
+  TS=i.Position
+  TP=TButton.Position
+ end
+end)
+
+UIS.InputChanged:Connect(function(i)
+ if TD and(
+  i.UserInputType==Enum.UserInputType.Touch
+  or i.UserInputType==Enum.UserInputType.MouseMovement
+ )then
+  local d=i.Position-TS
+
+  TButton.Position=UDim2.new(
+   TP.X.Scale,
+   TP.X.Offset+d.X,
+   TP.Y.Scale,
+   TP.Y.Offset+d.Y
+  )
+ end
+end)
+
+UIS.InputEnded:Connect(function(i)
+ if i.UserInputType==Enum.UserInputType.Touch
+ or i.UserInputType==Enum.UserInputType.MouseButton1 then
+  TD=false
+ end
+end)
+
+Min.MouseButton1Click:Connect(function()
+ Main.Visible=false
+ Notice.Visible=false
+ TButton.Visible=true
+end)
+
+TButton.MouseButton1Click:Connect(function()
+ Main.Visible=true
+ Notice.Visible=true
+ TButton.Visible=false
+end)
+
+Close.MouseButton1Click:Connect(function()
+ StopFly()
+ StopFix()
+
+ for p in pairs(ESPObjects)do
+  if ESPObjects[p]then
+   ESPObjects[p]:Destroy()
+  end
+ end
+
+ Gui:Destroy()
+end)
+
+OpenPage("ESP")
+
+print("Tnh-VN MENU loaded")
